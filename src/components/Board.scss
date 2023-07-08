@@ -1,7 +1,7 @@
-@use 'App';
+@use '../App';
 
 canvas {
-    width: min(18rem, 70%);
+    width: min(15rem, 70%);
     aspect-ratio: 1;
     border-radius: 1rem;
     box-shadow: 0.5rem 0.5rem App.$dark-color;

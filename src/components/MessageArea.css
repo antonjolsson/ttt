@@ -1,5 +1,6 @@
 * {
   /* border: solid 1px green; */
+  /* box-sizing: border-box; */
 }
 
 html, body, #root, .app {
@@ -23,6 +24,8 @@ code {
   align-items: center;
   justify-content: flex-start;
   background: linear-gradient(#eee, #ccc);
+  font-family: "Lilita One", sans-serif;
+  overflow: auto;
 }
 
 main {
@@ -33,13 +36,13 @@ main {
   flex: 1 1 auto;
 }
 
-canvas {
-  width: min(18rem, 70%);
-  aspect-ratio: 1;
-  border-radius: 1rem;
-  box-shadow: 0.5rem 0.5rem #333;
-  padding: 1rem;
-  background: white;
+#message-area {
+  color: #333;
+  font-size: 1.2rem;
+  letter-spacing: 0.09rem;
+  text-transform: uppercase;
+  font-weight: 300;
+  max-width: 70%;
 }
 
-/*# sourceMappingURL=Board.css.map */
+/*# sourceMappingURL=MessageArea.css.map */

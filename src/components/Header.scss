@@ -1,0 +1,20 @@
+@use '../App';
+@use 'sass:color';
+
+// noinspection Stylelint
+@import
+url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Permanent+Marker&family=Roboto:wght@900&display=swap');;
+
+.app-header {
+    h1 {
+        $font-size: 3rem;
+
+        text-align: center;
+        font-size: $font-size;
+        flex: 0 1 auto;
+        color: App.$primary-color;
+        text-transform: uppercase;
+        text-shadow: $font-size / 15 $font-size / 15 App.$dark-color;
+    }
+}
+

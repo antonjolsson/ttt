@@ -3,6 +3,7 @@ $primary-color: #ffa500;
 
 * {
     /* border: solid 1px green; */
+    /* box-sizing: border-box; */
 }
 
 html, body, #root, .app {
@@ -29,6 +30,8 @@ code {
     align-items: center;
     justify-content: flex-start;
     background: linear-gradient(#eee, #ccc);
+    font-family: 'Lilita One', sans-serif;
+    overflow: auto;
 }
 
 main {

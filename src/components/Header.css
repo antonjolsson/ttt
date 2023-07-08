@@ -1,6 +1,7 @@
-@import 'https://fonts.googleapis.com/css2?family=Lilita+One&display=swap';
+@import url("https://fonts.googleapis.com/css2?family=Lilita+One&family=Permanent+Marker&family=Roboto:wght@900&display=swap");
 * {
   /* border: solid 1px green; */
+  /* box-sizing: border-box; */
 }
 
 html, body, #root, .app {
@@ -24,6 +25,8 @@ code {
   align-items: center;
   justify-content: flex-start;
   background: linear-gradient(#eee, #ccc);
+  font-family: "Lilita One", sans-serif;
+  overflow: auto;
 }
 
 main {
@@ -37,20 +40,10 @@ main {
 .app-header h1 {
   text-align: center;
   font-size: 3rem;
-  font-family: "Lilita One", sans-serif;
   flex: 0 1 auto;
   color: #ffa500;
   text-transform: uppercase;
-  /* letter-spacing: 0.2rem; */
   text-shadow: 0.2rem 0.2rem #333;
-  /* span {
-      &:nth-of-type(1) {
-          color: App.$primary-color;
-      }
-      &:nth-of-type(2) {
-          color: color.adjust(App.$primary-color, $lightness: -25%);
-      }
-  } */
 }
 
 /*# sourceMappingURL=Header.css.map */
