@@ -1,15 +1,28 @@
 @use 'App';
+@use 'sass:color';
 
 // noinspection Stylelint
-@import URL('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Lilita+One&display=swap';
 
 .app-header {
     h1 {
         text-align: center;
-        font-size: 2.5rem;
-        font-family: 'Permanent Marker', sans-serif;
+        font-size: 3rem;
+        font-family: 'Lilita One', sans-serif;
         flex: 0 1 auto;
-        color: App.$dark-color;
+        color: App.$primary-color;
+        text-transform: uppercase;
+        /* letter-spacing: 0.2rem; */
+        text-shadow: 0.2rem 0.2rem App.$dark-color;
+
+        /* span {
+            &:nth-of-type(1) {
+                color: App.$primary-color;
+            }
+            &:nth-of-type(2) {
+                color: color.adjust(App.$primary-color, $lightness: -25%);
+            }
+        } */
     }
 }
 
