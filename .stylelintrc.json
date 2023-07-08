@@ -1,6 +1,7 @@
 {
   "extends": ["stylelint-config-standard-scss"],
   "rules": {
-    "alpha-value-notation": null
+    "alpha-value-notation": null,
+    "comment-empty-line-before": null
   }
 }

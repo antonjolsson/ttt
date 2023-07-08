@@ -1,3 +1,5 @@
+@use 'App';
+
 // noinspection Stylelint
 @import URL('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 
@@ -6,6 +8,8 @@
         text-align: center;
         font-size: 2.5rem;
         font-family: 'Permanent Marker', sans-serif;
+        flex: 0 1 auto;
+        color: App.$dark-color;
     }
 }
 

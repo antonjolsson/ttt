@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 * {
   /* border: solid 1px green; */
 }
@@ -34,12 +33,4 @@ main {
   flex: 1 1 auto;
 }
 
-.app-header h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  font-family: "Permanent Marker", sans-serif;
-  flex: 0 1 auto;
-  color: #333;
-}
-
-/*# sourceMappingURL=Header.css.map */
+/*# sourceMappingURL=App.css.map */
