@@ -1,10 +1,47 @@
 @use '../App';
 
-canvas {
-    width: min(15rem, 70%);
+#board {
+    width: 100%;
     aspect-ratio: 1;
-    border-radius: 1rem;
+    border-radius: App.$border-radius;
     box-shadow: 0.5rem 0.5rem App.$dark-color;
     padding: 1rem;
     background: white;
+}
+
+#board-grid-bg {
+    background: App.$dark-color;
+    display: grid;
+    gap: 3%;
+    aspect-ratio: 1;
+    border-radius: App.$border-radius;
+
+    .square {
+        width: auto;
+        height: auto;
+        background: white;
+        transition: background App.$transition-duration;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.available:hover {
+            background: App.$light-hover-color;
+            cursor: pointer;
+        }
+
+        span {
+            font-weight: 900;
+
+            &.player-one {
+                font-size: 5.0rem;
+                color: App.$primary-color;
+            }
+
+            &.player-two {
+                font-size: 4.3rem;
+                color: App.$accent-color;
+            }
+        }
+    }
 }

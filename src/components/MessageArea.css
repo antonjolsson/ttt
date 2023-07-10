@@ -1,6 +1,16 @@
 * {
   /* border: solid 1px green; */
-  /* box-sizing: border-box; */
+  box-sizing: border-box;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 700, "GRAD" 0, "opsz" 48;
+}
+
+@media (width <= 400px) {
+  html {
+    font-size: 12px;
+  }
 }
 
 html, body, #root, .app {
@@ -22,7 +32,7 @@ code {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   background: linear-gradient(#eee, #ccc);
   font-family: "Lilita One", sans-serif;
   overflow: auto;
@@ -33,7 +43,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1 1 auto;
+  width: min(18rem, 80%);
 }
 
 #message-area {
@@ -42,7 +52,6 @@ main {
   letter-spacing: 0.09rem;
   text-transform: uppercase;
   font-weight: 300;
-  max-width: 70%;
 }
 
 /*# sourceMappingURL=MessageArea.css.map */
