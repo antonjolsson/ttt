@@ -86,5 +86,13 @@ main {
   font-size: 4.3rem;
   color: #00c087;
 }
+#board-grid-bg .square .symbol.cross {
+  width: 90%;
+  height: 90%;
+}
+#board-grid-bg .square .symbol.circle {
+  width: 77%;
+  height: 77%;
+}
 
 /*# sourceMappingURL=Board.css.map */

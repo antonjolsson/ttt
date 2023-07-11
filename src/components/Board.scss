@@ -43,5 +43,17 @@
                 color: App.$accent-color;
             }
         }
+
+        .symbol {
+            &.cross {
+                width: 90%;
+                height: 90%;
+            }
+
+            &.circle {
+                width: 77%;
+                height: 77%;
+            }
+        }
     }
 }

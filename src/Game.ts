@@ -1,8 +1,8 @@
 import {IGameState} from "./App";
 
 export enum Player {
-    PLAYER_ONE = 'player-one',
-    PLAYER_TWO = 'player-two',
+    CROSS = 'x',
+    CIRCLE = 'o',
 }
 
 export interface ISquare {

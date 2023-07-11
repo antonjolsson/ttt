@@ -28,7 +28,7 @@ function initBoard(gridSize: number): ISquare[] {
 
 function getInitialGameState() {
     return {
-        currentPlayer: Player.PLAYER_ONE,
+        currentPlayer: Player.CROSS,
         winningStreak: [] as ISquare[],
         gridSize: 3,
         board: initBoard(3)
@@ -37,7 +37,7 @@ function getInitialGameState() {
 
 function App() {
     function getCurrentMessage(currentPlayer: Player) {
-        return currentPlayer === Player.PLAYER_ONE ? 'Player one\'s turn...' : 'Player two\'s turn...';
+        return currentPlayer === Player.CROSS ? 'Player one\'s turn...' : 'Player two\'s turn...';
     }
 
     const [gameState, setGameState] = useState(getInitialGameState())

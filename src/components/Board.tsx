@@ -1,12 +1,14 @@
 import './Board.css'
 import '../App.css'
 import React, {useContext, useState} from "react";
-import {Game, ISquare, Player} from "../Game";
+import {Game, Player} from "../Game";
 import {GameStateContext} from "../App";
+import {ReactComponent as SymbolCross} from './symbols/cross.svg'
+import {ReactComponent as SymbolCircle} from './symbols/circle.svg'
 
 const playerToSymbolMap = new Map<Player, string>([
-    [Player.PLAYER_ONE, 'close'],
-    [Player.PLAYER_TWO, 'circle']
+    [Player.CROSS, 'cross'],
+    [Player.CIRCLE, 'circle']
 ])
 
 function Square(props: { i: number }) {
@@ -24,16 +26,20 @@ function Square(props: { i: number }) {
             newBoard[props.i].player = player
             gameCtxt.setGameState(
                 {...gameCtxt.gameState,
-                    currentPlayer: player === Player.PLAYER_ONE ? Player.PLAYER_TWO : Player.PLAYER_ONE,
+                    currentPlayer: player === Player.CROSS ? Player.CIRCLE : Player.CROSS,
                     board: newBoard
                 })
         }
     }
 
+    function getSymbolComponent() {
+        return player === Player.CROSS
+            ? <SymbolCross className={'symbol cross'}/>
+            : <SymbolCircle className={'symbol circle'}/>;
+    }
+
     return <div className={`square ${!symbol ? " available" : ""}`} onMouseUp={onClick}>
-        {symbol && player
-            ? <span className={`material-symbols-outlined ${player}`}>{symbol}</span>
-            : ''}
+        {symbol && player ? getSymbolComponent() : ''}
     </div>;
 }
 
