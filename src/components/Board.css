@@ -3,10 +3,6 @@
   box-sizing: border-box;
 }
 
-.material-symbols-outlined {
-  font-variation-settings: "FILL" 0, "wght" 700, "GRAD" 0, "opsz" 48;
-}
-
 @media (width <= 400px) {
   html {
     font-size: 12px;
@@ -75,16 +71,17 @@ main {
   background: #eee;
   cursor: pointer;
 }
-#board-grid-bg .square span {
-  font-weight: 900;
+@keyframes fade-bg {
+  from {
+    background: white;
+  }
+  to {
+    background: #eee;
+  }
 }
-#board-grid-bg .square span.player-one {
-  font-size: 5rem;
-  color: #ffa500;
-}
-#board-grid-bg .square span.player-two {
-  font-size: 4.3rem;
-  color: #00c087;
+#board-grid-bg .square.winning-square {
+  animation: 0.05s fade-bg 11 alternate forwards;
+  background: white;
 }
 #board-grid-bg .square .symbol.cross {
   width: 90%;

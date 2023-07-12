@@ -18,7 +18,7 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
     let player = gameCtxt.gameState.board[props.i].player
 
     function onClick(): void {
-        if (!player) {
+        if (!player && !gameCtxt.gameState.winner) {
             const player = gameCtxt.gameState.currentPlayer
             setSymbol(playerToSymbolMap.get(player!)!)
             gameCtxt.gameState.board[props.i].player = player
@@ -33,7 +33,20 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
             : <SymbolCircle className={'symbol circle'}/>;
     }
 
-    return <div className={`square ${!symbol ? " available" : ""}`} onMouseUp={onClick}>
+    function getClassName(): string {
+        let name =  `square`
+        if (player) {
+            name += ` ${playerToSymbolMap.get(player)}`
+        }
+        if (!symbol && !gameCtxt.gameState.winner) {
+            name += ' available'
+        } else if (gameCtxt.gameState.board[props.i].inWinningRow) {
+            name += ' winning-square'
+        }
+        return name
+    }
+
+    return <div className={getClassName()} onMouseUp={onClick}>
         {symbol && player ? getSymbolComponent() : ''}
     </div>;
 }

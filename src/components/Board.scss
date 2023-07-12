@@ -30,18 +30,18 @@
             cursor: pointer;
         }
 
-        span {
-            font-weight: 900;
-
-            &.player-one {
-                font-size: 5.0rem;
-                color: App.$primary-color;
+        @keyframes fade-bg {
+            from {
+                background: white;
             }
-
-            &.player-two {
-                font-size: 4.3rem;
-                color: App.$accent-color;
+            to {
+                background: App.$light-hover-color;
             }
+        }
+
+        &.winning-square {
+            animation: 0.05s fade-bg 11 alternate forwards;
+            background: white;
         }
 
         .symbol {
