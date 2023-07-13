@@ -75,7 +75,7 @@ main {
 #button-container button:hover {
   transform: scale(1.1);
 }
-@keyframes scale {
+@keyframes scale-up {
   from {
     scale: 0;
   }
@@ -83,12 +83,19 @@ main {
     scale: 1;
   }
 }
+@keyframes scale-down {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 0;
+  }
+}
 #button-container button.hidden {
-  visibility: hidden;
+  animation: 0.3s scale-down forwards;
 }
 #button-container button.visible {
-  animation: 0.3s scale forwards;
-  visibility: visible;
+  animation: 0.3s scale-up forwards;
 }
 
 /*# sourceMappingURL=RestartButton.css.map */

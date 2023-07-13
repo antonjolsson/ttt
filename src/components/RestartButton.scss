@@ -34,7 +34,7 @@ $screen-bp: App.$screen-break-point;
             transform: scale(1.1);
         }
 
-        @keyframes scale {
+        @keyframes scale-up {
             from {
                 scale: 0;
             }
@@ -43,13 +43,21 @@ $screen-bp: App.$screen-break-point;
             }
         }
 
+        @keyframes scale-down {
+            from {
+                scale: 1;
+            }
+            to {
+                scale: 0;
+            }
+        }
+
         &.hidden {
-            visibility: hidden;
+            animation: App.$transition-duration scale-down forwards;
         }
 
         &.visible {
-            animation: App.$transition-duration scale forwards;
-            visibility: visible;
+            animation: App.$transition-duration scale-up forwards;
         }
     }
 }
