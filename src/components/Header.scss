@@ -6,6 +6,11 @@
 'https://fonts.googleapis.com/css2?family=Lilita+One&family=Permanent+Marker&family=Roboto:wght@900&display=swap';;
 
 .app-header {
+    flex: 1.3 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
     h1 {
         $font-size: 3rem;
 
@@ -14,7 +19,7 @@
         color: App.$primary-color;
         text-transform: uppercase;
         text-shadow: $font-size / 15 $font-size / 15 App.$dark-color;
-        margin-bottom: 4rem;
+        margin-bottom: 3rem;
         padding: 0 0.5rem;
     }
 }

@@ -1,0 +1,55 @@
+@use '../App';
+
+$screen-bp: App.$screen-break-point;
+
+#button-container {
+    height: 2rem;
+    width: min(12rem, 95%);
+
+    button {
+        background: App.$primary-color;
+        border: none;
+        border-radius: App.$border-radius-small;
+        cursor: pointer;
+        box-shadow: 0.2rem 0.2rem App.$dark-color;
+        font-family: inherit;
+        text-transform: uppercase;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        transition: transform App.$transition-duration;
+        height: 100%;
+        width: 100%;
+        color: #ffff;
+
+        @media (width > $screen-bp) {
+            font-size: App.$btn-font-size;
+        }
+
+        @media (width <= $screen-bp) {
+            font-size: 1.0rem;
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes scale {
+            from {
+                scale: 0;
+            }
+            to {
+                scale: 1;
+            }
+        }
+
+        &.hidden {
+            visibility: hidden;
+        }
+
+        &.visible {
+            animation: App.$transition-duration scale forwards;
+            visibility: visible;
+        }
+    }
+}

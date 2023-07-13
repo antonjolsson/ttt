@@ -1,4 +1,3 @@
-@import 'https://fonts.googleapis.com/css2?family=Lilita+One&family=Permanent+Marker&family=Roboto:wght@900&display=swap';
 * {
   /* border: solid 1px green; */
   box-sizing: border-box;
@@ -43,20 +42,53 @@ main {
   width: min(18rem, 80%);
 }
 
-.app-header {
-  flex: 1.3 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+#button-container {
+  height: 2rem;
+  width: min(12rem, 95%);
 }
-.app-header h1 {
-  text-align: center;
-  font-size: 3rem;
-  color: #ffa500;
+#button-container button {
+  background: #ffa500;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0.2rem 0.2rem #333;
+  font-family: inherit;
   text-transform: uppercase;
-  text-shadow: 0.2rem 0.2rem #333;
-  margin-bottom: 3rem;
-  padding: 0 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: transform 0.3s;
+  height: 100%;
+  width: 100%;
+  color: white;
+}
+@media (width > 400px) {
+  #button-container button {
+    font-size: 0.85rem;
+  }
+}
+@media (width <= 400px) {
+  #button-container button {
+    font-size: 1rem;
+  }
+}
+#button-container button:hover {
+  transform: scale(1.1);
+}
+@keyframes scale {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
+}
+#button-container button.hidden {
+  visibility: hidden;
+}
+#button-container button.visible {
+  animation: 0.3s scale forwards;
+  visibility: visible;
 }
 
-/*# sourceMappingURL=Header.css.map */
+/*# sourceMappingURL=RestartButton.css.map */

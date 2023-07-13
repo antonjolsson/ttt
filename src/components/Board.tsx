@@ -1,6 +1,6 @@
 import './Board.css'
 import '../App.css'
-import React, {ReactElement, useContext, useState} from "react";
+import React, {ReactElement, useContext, useEffect, useState} from "react";
 import {GameEngine, Player} from "../GameEngine";
 import {GameStateContext} from "../App";
 import {ReactComponent as SymbolCross} from './symbols/cross.svg'
@@ -16,6 +16,12 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
     const gameCtxt = useContext(GameStateContext)
 
     let player = gameCtxt.gameState.board[props.i].player
+
+    useEffect(() => {
+        if (!player) {
+            setSymbol('')
+        }
+    }, [player, props.i])
 
     function onClick(): void {
         if (!player && !gameCtxt.gameState.winner) {

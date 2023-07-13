@@ -1,5 +1,4 @@
 import {IGameState} from "./App";
-import {SetStateAction} from "react";
 
 export enum Player {
     CROSS = 'x',
@@ -11,8 +10,31 @@ export interface ISquare {
     inWinningRow?: boolean
 }
 
+// TODO: Move inside class
+export function initBoard(gridSize: number): ISquare[] {
+    const board: ISquare[] = []
+    for (let i = 0; i < gridSize * gridSize; i++) {
+        const square: ISquare = {player: undefined}
+        board.push(square)
+    }
+    return board
+}
+
+export function getInitialGameState(): IGameState {
+    return {
+        currentPlayer: Player.CROSS,
+        winningRow: [] as ISquare[],
+        gridSize: 3,
+        board: initBoard(3)
+    };
+}
+
 export class GameEngine {
     constructor(private _gameState: IGameState) {}
+
+    set gameState(value: IGameState) {
+        this._gameState = value;
+    }
 
     private checkAllRows(): void {
         const board = this._gameState.board

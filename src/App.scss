@@ -4,7 +4,10 @@ $light-hover-color: #eee;
 $light-gray: #ccc;
 $transition-duration: 0.3s;
 $border-radius: 1rem;
+$border-radius-small: 0.5rem;
 $accent-color: #00c087;
+$btn-font-size: 0.85rem;
+$screen-break-point: 400px;
 
 * {
     /* border: solid 1px green; */
@@ -12,7 +15,7 @@ $accent-color: #00c087;
 }
 
 html {
-    @media (width <= 400px) {
+    @media (width <= $screen-break-point) {
         font-size: 12px;
     }
 }

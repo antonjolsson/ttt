@@ -3,7 +3,9 @@ import {Header} from "./components/Header";
 import {Board} from "./components/Board";
 import './App.css'
 import {MessageArea} from "./components/MessageArea";
-import {GameEngine, ISquare, Player} from "./GameEngine";
+import {GameEngine, getInitialGameState, ISquare, Player} from "./GameEngine";
+import {RestartButton} from "./components/RestartButton";
+import {Footer} from "./components/Footer";
 
 export interface IGameState {
     currentPlayer: Player,
@@ -17,24 +19,6 @@ export const GameStateContext = createContext({
     gameState: getInitialGameState(),
     setGameState: (g: SetStateAction<IGameState>) => {}
 })
-
-function initBoard(gridSize: number): ISquare[] {
-    const board: ISquare[] = []
-    for (let i = 0; i < gridSize * gridSize; i++) {
-        const square: ISquare = {player: undefined}
-        board.push(square)
-    }
-    return board
-}
-
-function getInitialGameState(): IGameState {
-    return {
-        currentPlayer: Player.CROSS,
-        winningRow: [] as ISquare[],
-        gridSize: 3,
-        board: initBoard(3)
-    };
-}
 
 function App(): ReactElement {
     function getCurrentMessage(currentPlayer: Player): string {
@@ -61,7 +45,9 @@ function App(): ReactElement {
         <main>
             <Board gameEngine={gameEngine.current}/>
             <MessageArea message={message}/>
+            <RestartButton gameEngine={gameEngine.current}/>
         </main>
+        <Footer />
 
     </div>
       </GameStateContext.Provider>
