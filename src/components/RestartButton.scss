@@ -2,62 +2,31 @@
 
 $screen-bp: App.$screen-break-point;
 
-#button-container {
+button {
     height: 2rem;
     width: min(12rem, 95%);
+    background: App.$primary-color;
+    border: none;
+    border-radius: App.$border-radius-small;
+    cursor: pointer;
+    box-shadow: 0.2rem 0.2rem App.$dark-color;
+    font-family: inherit;
+    text-transform: uppercase;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: transform App.$transition-duration;
+    color: #ffff;
 
-    button {
-        background: App.$primary-color;
-        border: none;
-        border-radius: App.$border-radius-small;
-        cursor: pointer;
-        box-shadow: 0.2rem 0.2rem App.$dark-color;
-        font-family: inherit;
-        text-transform: uppercase;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        transition: transform App.$transition-duration;
-        height: 100%;
-        width: 100%;
-        color: #ffff;
+    @media (width > $screen-bp) {
+        font-size: App.$btn-font-size;
+    }
 
-        @media (width > $screen-bp) {
-            font-size: App.$btn-font-size;
-        }
+    @media (width <= $screen-bp) {
+        font-size: 1.0rem;
+    }
 
-        @media (width <= $screen-bp) {
-            font-size: 1.0rem;
-        }
-
-        &:hover {
-            transform: scale(1.1);
-        }
-
-        @keyframes scale-up {
-            from {
-                scale: 0;
-            }
-            to {
-                scale: 1;
-            }
-        }
-
-        @keyframes scale-down {
-            from {
-                scale: 1;
-            }
-            to {
-                scale: 0;
-            }
-        }
-
-        &.hidden {
-            animation: App.$transition-duration scale-down forwards;
-        }
-
-        &.visible {
-            animation: App.$transition-duration scale-up forwards;
-        }
+    &:hover {
+        transform: scale(1.1);
     }
 }

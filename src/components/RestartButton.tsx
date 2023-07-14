@@ -12,7 +12,5 @@ export function RestartButton(props: {gameEngine: GameEngine}): ReactElement {
         gameCtxt.setGameState(initialState)
     }
 
-    return <div id={'button-container'}>
-        <button className={gameCtxt.gameState.winner ? 'visible' : 'hidden'} onClick={onClick}>New Game</button>
-    </div>;
+    return  <button onClick={onClick}>New Game</button>
 }

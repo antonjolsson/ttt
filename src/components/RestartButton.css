@@ -42,11 +42,9 @@ main {
   width: min(18rem, 80%);
 }
 
-#button-container {
+button {
   height: 2rem;
   width: min(12rem, 95%);
-}
-#button-container button {
   background: #ffa500;
   border: none;
   border-radius: 0.5rem;
@@ -58,44 +56,20 @@ main {
   white-space: nowrap;
   text-overflow: ellipsis;
   transition: transform 0.3s;
-  height: 100%;
-  width: 100%;
   color: white;
 }
 @media (width > 400px) {
-  #button-container button {
+  button {
     font-size: 0.85rem;
   }
 }
 @media (width <= 400px) {
-  #button-container button {
+  button {
     font-size: 1rem;
   }
 }
-#button-container button:hover {
+button:hover {
   transform: scale(1.1);
-}
-@keyframes scale-up {
-  from {
-    scale: 0;
-  }
-  to {
-    scale: 1;
-  }
-}
-@keyframes scale-down {
-  from {
-    scale: 1;
-  }
-  to {
-    scale: 0;
-  }
-}
-#button-container button.hidden {
-  animation: 0.3s scale-down forwards;
-}
-#button-container button.visible {
-  animation: 0.3s scale-up forwards;
 }
 
 /*# sourceMappingURL=RestartButton.css.map */
