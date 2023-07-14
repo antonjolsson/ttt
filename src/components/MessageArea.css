@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@500;600&display=swap");
 * {
   /* border: solid 1px green; */
   box-sizing: border-box;
@@ -43,11 +44,12 @@ main {
 }
 
 #message-area {
+  font-family: Poppins, sans-serif;
   color: #333;
   font-size: 1.2rem;
-  letter-spacing: 0.09rem;
-  text-transform: uppercase;
-  font-weight: 300;
+  letter-spacing: -0.05rem;
+  font-weight: 600;
+  margin-top: 1.6rem;
 }
 
 /*# sourceMappingURL=MessageArea.css.map */

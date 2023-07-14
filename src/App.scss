@@ -9,6 +9,9 @@ $accent-color: #00c087;
 $btn-font-size: 0.85rem;
 $screen-break-point: 400px;
 
+// noinspection Stylelint
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@500;600&display=swap');
+
 * {
     /* border: solid 1px green; */
      box-sizing: border-box;
