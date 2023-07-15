@@ -71,6 +71,7 @@ code {
     overflow: auto;
 }
 
+// TODO: Fill entire (80%) width when <= $screen-break-point-small
 main {
     display: flex;
     flex-direction: column-reverse;

@@ -94,10 +94,17 @@ main #center {
   text-shadow: 0.2rem 0.2rem #333;
   margin-bottom: 3rem;
   padding: 0 0.5rem;
+  white-space: nowrap;
 }
 @media (width <= 720px) {
   .app-header h1 {
     margin-bottom: 1.4rem;
+  }
+}
+@media (width <= 400px) {
+  .app-header h1 {
+    text-shadow: calc(min(3rem, 15vw) / 15) calc(min(3rem, 15vw) / 15) #333;
+    font-size: min(3rem, 15vw);
   }
 }
 

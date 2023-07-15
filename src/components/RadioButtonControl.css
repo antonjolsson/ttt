@@ -90,6 +90,14 @@ main #center {
   padding: 0.5rem;
   color: #555;
 }
+@media (width <= 400px) {
+  .radio-button-control {
+    font-size: min(0.85rem, 7vw);
+  }
+  .radio-button-control .options {
+    gap: 0.2rem;
+  }
+}
 .radio-button-control h2 {
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -97,11 +105,16 @@ main #center {
 .radio-button-control .options {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: min(0.5rem, 1.5vw);
 }
 .radio-button-control .options .option {
   text-transform: uppercase;
   transition: color 0.15s;
+}
+@media (width <= 400px) {
+  .radio-button-control .options .option {
+    word-break: break-all;
+  }
 }
 .radio-button-control .options .option.unselected {
   color: #ccc;

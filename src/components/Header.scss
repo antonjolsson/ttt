@@ -20,9 +20,18 @@
         text-shadow: $font-size / 15 $font-size / 15 App.$dark-color;
         margin-bottom: 3rem;
         padding: 0 0.5rem;
+        white-space: nowrap;
 
-        @media (width <= App.$screen-break-point-large) {
+        @media (width <= (App.$screen-break-point-large)) {
             margin-bottom: 3rem - App.$row-gap;
+        }
+
+        @media (width <= (App.$screen-break-point-small)) {
+            $h1-font-size: App.$h1-font-size;
+            $font-size: min($h1-font-size, 15vw);
+
+            text-shadow: calc($font-size / 15) calc($font-size / 15) App.$dark-color;
+            font-size: $font-size;
         }
     }
 }
