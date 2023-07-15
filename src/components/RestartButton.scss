@@ -1,6 +1,6 @@
 @use '../App';
 
-$screen-bp: App.$screen-break-point;
+$screen-bp: App.$screen-break-point-small;
 
 button {
     height: 2rem;

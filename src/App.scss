@@ -1,24 +1,44 @@
+// Colors
 $dark-color: #333;
+$low-contrast-dark-color: #555;
 $primary-color: #ffa500;
 $light-hover-color: #eee;
 $light-gray: #ccc;
+$gray: #aaa;
+$accent-color: #00c087;
+
+// Font sizes
+$h1-font-size: 3rem;
+$h2-font-size: 1.2rem;
+$btn-font-size: 0.85rem;
+
 $transition-duration: 0.3s;
+$transition-duration-short: 0.15s;
 $border-radius: 1rem;
 $border-radius-small: 0.5rem;
-$accent-color: #00c087;
-$btn-font-size: 0.85rem;
-$screen-break-point: 400px;
+$row-gap: 1.6rem;
+
+$screen-break-point-small: 400px;
+$screen-break-point-large: 720px;
 
 // noinspection Stylelint
-@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@900&display=swap');
 
 * {
     /* border: solid 1px green; */
      box-sizing: border-box;
 }
 
+h1 {
+    font-size: $h1-font-size;
+}
+
+h2 {
+    font-size: $h2-font-size;
+}
+
 html {
-    @media (width <= $screen-break-point) {
+    @media (width <= $screen-break-point-small) {
         font-size: 12px;
     }
 }
@@ -53,8 +73,39 @@ code {
 
 main {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
     width: min(18rem, 80%);
+
+    #left {
+        width: 0;
+        height: 0;
+    }
+
+    #center {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        @media (width <= $screen-break-point-large) {
+            margin-top: $row-gap;
+        }
+    }
+
+    @media (width > $screen-break-point-large) {
+        width: 100%;
+        flex-direction: row;
+        gap: 1.5rem;
+
+        #center {
+            width: min(18rem, 40%);
+        }
+
+        #left {
+            flex: 1 1 20%;
+        }
+    }
 }

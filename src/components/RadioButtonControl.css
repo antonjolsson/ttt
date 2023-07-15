@@ -80,54 +80,35 @@ main #center {
   }
 }
 
-#board {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 1rem;
-  box-shadow: 0.5rem 0.5rem #333;
-  padding: 1rem;
-  background: white;
-}
-
-#board-grid-bg {
-  background: #333;
-  display: grid;
-  gap: 3%;
-  aspect-ratio: 1;
-  border-radius: 1rem;
-}
-#board-grid-bg .square {
-  width: auto;
-  height: auto;
-  background: white;
-  transition: background 0.3s;
+.radio-button-control {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  font-size: 0.85rem;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  color: #555;
 }
-#board-grid-bg .square.available:hover {
-  background: #eee;
+.radio-button-control h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+.radio-button-control .options {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+.radio-button-control .options .option {
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.radio-button-control .options .option.unselected {
+  color: #ccc;
   cursor: pointer;
 }
-@keyframes fade-bg {
-  from {
-    background: white;
-  }
-  to {
-    background: #eee;
-  }
-}
-#board-grid-bg .square.winning-square {
-  animation: 0.05s fade-bg 11 alternate forwards;
-  background: white;
-}
-#board-grid-bg .square .symbol.cross {
-  width: 90%;
-  height: 90%;
-}
-#board-grid-bg .square .symbol.circle {
-  width: 77%;
-  height: 77%;
+.radio-button-control .options .option.unselected:hover {
+  color: inherit;
 }
 
-/*# sourceMappingURL=Board.css.map */
+/*# sourceMappingURL=RadioButtonControl.css.map */

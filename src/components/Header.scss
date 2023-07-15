@@ -12,15 +12,18 @@
     justify-content: flex-end;
 
     h1 {
-        $font-size: 3rem;
+        $font-size: App.$h1-font-size;
 
         text-align: center;
-        font-size: $font-size;
         color: App.$primary-color;
         text-transform: uppercase;
         text-shadow: $font-size / 15 $font-size / 15 App.$dark-color;
         margin-bottom: 3rem;
         padding: 0 0.5rem;
+
+        @media (width <= App.$screen-break-point-large) {
+            margin-bottom: 3rem - App.$row-gap;
+        }
     }
 }
 

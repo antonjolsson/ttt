@@ -6,12 +6,14 @@ import {MessageArea} from "./components/MessageArea";
 import {GameEngine, getInitialGameState, ISquare, Player} from "./GameEngine";
 import {RestartButton} from "./components/RestartButton";
 import {Footer} from "./components/Footer";
+import {SideBar} from "./components/SideBar";
 
 export interface IGameState {
     currentPlayer: Player,
     board: ISquare[],
     winningRow: ISquare[],
     gridSize: number,
+    ai?: Player,
     winner?: Player
 }
 
@@ -21,21 +23,17 @@ export const GameStateContext = createContext({
 })
 
 function App(): ReactElement {
-    function getCurrentMessage(currentPlayer: Player): string {
-        return currentPlayer === Player.CROSS ? 'Player one\'s turn...' : 'Player two\'s turn...';
-    }
-
     const [gameState, setGameState] = useState(getInitialGameState())
-    const [message, setMessage] = useState(getCurrentMessage(gameState.currentPlayer))
+    const [message, setMessage] = useState(getCurrentMessage(gameState.currentPlayer, gameState.winner))
     const gameEngine = useRef(new GameEngine(gameState))
 
+    function getCurrentMessage(currentPlayer: Player, winner?: Player): string {
+        const playerName = currentPlayer === Player.CROSS ? 'Player one' : 'Player two'
+        return !winner ? `${playerName}'s turn...` : `${playerName} won!`;
+    }
+
     useEffect(() => {
-        const playerName = gameState.currentPlayer === Player.CROSS ? 'Player one' : 'Player two'
-        if (!gameState.winner) {
-            setMessage(`${playerName}'s turn...`)
-        } else {
-            setMessage(`${playerName} won!`)
-        }
+        setMessage(getCurrentMessage(gameState.currentPlayer, gameState.winner));
     }, [gameState.currentPlayer, gameState.winner])
 
   return (
@@ -43,9 +41,13 @@ function App(): ReactElement {
     <div className="app">
         <Header/>
         <main>
-            <Board gameEngine={gameEngine.current}/>
-            <MessageArea message={message}/>
-            <RestartButton gameEngine={gameEngine.current}/>
+            <div id={'left'}/>
+            <section id={'center'}>
+                <Board gameEngine={gameEngine.current}/>
+                <MessageArea message={message}/>
+                <RestartButton gameEngine={gameEngine.current}/>
+            </section>
+            <SideBar/>
         </main>
         <Footer />
 

@@ -80,54 +80,32 @@ main #center {
   }
 }
 
-#board {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 1rem;
-  box-shadow: 0.5rem 0.5rem #333;
-  padding: 1rem;
-  background: white;
-}
-
-#board-grid-bg {
-  background: #333;
-  display: grid;
-  gap: 3%;
-  aspect-ratio: 1;
-  border-radius: 1rem;
-}
-#board-grid-bg .square {
-  width: auto;
-  height: auto;
-  background: white;
-  transition: background 0.3s;
+#right {
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  height: fit-content;
+  width: 100%;
+}
+#right #sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
 }
-#board-grid-bg .square.available:hover {
-  background: #eee;
-  cursor: pointer;
-}
-@keyframes fade-bg {
-  from {
-    background: white;
+@media (width > 720px) {
+  #right {
+    justify-content: flex-start;
+    flex: 1 1 20%;
+    height: 100%;
   }
-  to {
-    background: #eee;
+  #right #sidebar {
+    width: min(15rem, 90%);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
-}
-#board-grid-bg .square.winning-square {
-  animation: 0.05s fade-bg 11 alternate forwards;
-  background: white;
-}
-#board-grid-bg .square .symbol.cross {
-  width: 90%;
-  height: 90%;
-}
-#board-grid-bg .square .symbol.circle {
-  width: 77%;
-  height: 77%;
 }
 
-/*# sourceMappingURL=Board.css.map */
+/*# sourceMappingURL=Sidebar.css.map */
