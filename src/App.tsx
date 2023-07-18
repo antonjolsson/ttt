@@ -37,6 +37,15 @@ function App(): ReactElement {
         setMessage(getCurrentMessage(gameState.currentPlayer, gameState.winner));
     }, [gameState.currentPlayer, gameState.winner])
 
+    useEffect(() => {
+        if (gameState.ai === gameState.currentPlayer) {
+            gameState.currentPlayer = gameEngine.current.getNextPlayer(gameState.currentPlayer)
+            const newState = gameEngine.current.update(gameState)
+            setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner,
+                board: newState.board})
+        }
+    }, [gameState, gameState.ai])
+
   return (
       <GameStateContext.Provider value={{gameState: gameState, setGameState: setGameState}}>
     <div className="app">

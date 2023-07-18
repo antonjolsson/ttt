@@ -88,7 +88,7 @@ export class GameEngine {
         this._gameState = gameState
         this.checkForWinCondition()
         if (!this._gameState.winner) {
-            this._gameState.currentPlayer = this._gameState.currentPlayer === Player.CROSS ? Player.CIRCLE : Player.CROSS
+            this._gameState.currentPlayer = this.getNextPlayer(this._gameState.currentPlayer)
 
             if (this._gameState.currentPlayer === this._gameState.ai) {
                 if (this._gameState.aiLevel === AILevel.EASY) {
@@ -100,6 +100,10 @@ export class GameEngine {
             }
         }
         return this._gameState
+    }
+
+    getNextPlayer(currentPlayer: Player): Player {
+        return currentPlayer === Player.CROSS ? Player.CIRCLE : Player.CROSS;
     }
 
     private makeHardAIMove(): void {
