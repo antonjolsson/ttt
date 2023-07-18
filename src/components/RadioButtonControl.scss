@@ -2,27 +2,31 @@
 
 .radio-button-control {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     font-size: App.$btn-font-size;
-    background: white;
-    border-radius: App.$border-radius-small;
+    text-transform: uppercase;
     padding: 0.5rem;
-    color: App.$low-contrast-dark-color;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 0.9rem;
 
     @media (width <= (App.$screen-break-point-small)) {
         $font-size: App.$large-small-font-size-ratio * App.$btn-font-size;
 
         font-size: min($font-size, 7vw);
-
-        .options {
-            gap: 0.2rem;
-        }
+        gap: 1.1rem * App.$large-small-font-size-ratio;
+        padding: 0.3rem;
     }
 
-    h2 {
-        margin-top: 0;
-        margin-bottom: 0.5rem;
+    .control-label {
+        width: 3rem;
+        text-align: right;
+        margin: 0;
+
+        @media (width <= (App.$screen-break-point-small)) {
+            width: 3rem * App.$large-small-font-size-ratio;
+        }
     }
 
     .options {
@@ -30,8 +34,11 @@
         flex-direction: row;
         gap: min(0.5rem, 1.5vw);
 
+        @media (width <= (App.$screen-break-point-small)) {
+            gap: 0.7rem * App.$large-small-font-size-ratio;
+        }
+
         .option {
-            text-transform: uppercase;
             transition: color App.$transition-duration-short;
 
             @media (width <= (App.$screen-break-point-small)) {
@@ -40,12 +47,19 @@
 
             &.unselected {
                 color: App.$light-gray;
-                cursor: pointer;
 
-                &:hover {
-                    color: inherit;
+                &:not(.disabled) {
+                    cursor: pointer;
+
+                    &:hover {
+                        color: inherit;
+                    }
                 }
             }
         }
+    }
+
+    .disabled {
+        color: App.$light-gray;
     }
 }

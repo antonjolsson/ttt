@@ -5,6 +5,11 @@ export enum Player {
     CIRCLE = 'o',
 }
 
+export enum AILevel {
+    EASY = 'easy',
+    HARD = 'hard'
+}
+
 export interface ISquare {
     player?: Player,
     inWinningRow?: boolean
@@ -25,7 +30,9 @@ export function getInitialGameState(): IGameState {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
         gridSize: 3,
-        board: initBoard(3)
+        board: initBoard(3),
+        ai: Player.CIRCLE,
+        aiLevel: AILevel.EASY
     };
 }
 

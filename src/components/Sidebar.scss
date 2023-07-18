@@ -8,23 +8,43 @@
     width: 100%;
 
     #sidebar {
-        width: 100%;
+        width: fit-content;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        border-radius: App.$border-radius-small;
+        padding: 0.5rem;
+        color: App.$low-contrast-dark-color;
+        background: white;
+
+        h2 {
+            width: 100%;
+            text-align: center;
+            margin: 0.5rem auto;
+        }
     }
 
-    @media (width > App.$screen-break-point-large) {
+    @media (width > (App.$screen-break-point-large)) {
         justify-content: flex-start;
         flex: 1 1 20%;
         height: 100%;
 
         #sidebar {
-            width: min(15rem, 90%);
+            width: fit-content;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             justify-content: flex-start;
+        }
+    }
+
+    @media (width <= (App.$screen-break-point-small)) {
+        width: 100%;
+        background: white;
+        border-radius: App.$border-radius-small;
+
+        #sidebar {
+            padding: 0.2rem;
         }
     }
 }
