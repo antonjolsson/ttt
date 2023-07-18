@@ -12,6 +12,9 @@ h2 {
   font-size: 1.2rem;
 }
 
+html {
+  font-size: 16px;
+}
 @media (width <= 400px) {
   html {
     font-size: 12px;
@@ -41,6 +44,8 @@ code {
   background: linear-gradient(#eee, #ccc);
   font-family: "Lilita One", sans-serif;
   overflow: auto;
+  height: unset;
+  min-height: 100%;
 }
 
 main {
@@ -49,6 +54,7 @@ main {
   align-items: center;
   justify-content: center;
   width: min(18rem, 80%);
+  height: 100%;
 }
 main #left {
   width: 0;
@@ -63,6 +69,11 @@ main #center {
 }
 @media (width <= 720px) {
   main #center {
+    margin-top: 1.2rem;
+  }
+}
+@media (width <= 400px) {
+  main #center {
     margin-top: 1.6rem;
   }
 }
@@ -71,12 +82,18 @@ main #center {
     width: 100%;
     flex-direction: row;
     gap: 1.5rem;
+    align-items: flex-start;
   }
   main #center {
     width: min(18rem, 40%);
   }
   main #left {
     flex: 1 1 20%;
+  }
+}
+@media (width <= 400px) {
+  main {
+    width: 80%;
   }
 }
 

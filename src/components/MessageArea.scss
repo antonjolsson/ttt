@@ -8,4 +8,8 @@
     font-size: $font-size;
     font-weight: 900;
     margin-top: App.$row-gap;
+
+    @media (width <= (App.$screen-break-point-small)) {
+        font-size: $font-size * App.$large-small-font-size-ratio;
+    }
 }

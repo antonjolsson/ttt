@@ -6,7 +6,7 @@
 'https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@500;600:wght@900&display=swap';
 
 .app-header {
-    flex: 1.3 1;
+    flex: 1 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -20,15 +20,13 @@
         text-shadow: $font-size / 15 $font-size / 15 App.$dark-color;
         margin-bottom: 3rem;
         padding: 0 0.5rem;
-        white-space: nowrap;
 
         @media (width <= (App.$screen-break-point-large)) {
             margin-bottom: 3rem - App.$row-gap;
         }
 
         @media (width <= (App.$screen-break-point-small)) {
-            $h1-font-size: App.$h1-font-size;
-            $font-size: min($h1-font-size, 15vw);
+            $font-size: $font-size * App.$large-small-font-size-ratio;
 
             text-shadow: calc($font-size / 15) calc($font-size / 15) App.$dark-color;
             font-size: $font-size;

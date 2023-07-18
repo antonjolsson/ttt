@@ -11,9 +11,9 @@
     color: App.$low-contrast-dark-color;
 
     @media (width <= (App.$screen-break-point-small)) {
-        $btn-font-size: App.$btn-font-size;
+        $font-size: App.$large-small-font-size-ratio * App.$btn-font-size;
 
-        font-size: min($btn-font-size, 7vw);
+        font-size: min($font-size, 7vw);
 
         .options {
             gap: 0.2rem;

@@ -7,6 +7,10 @@
     box-shadow: 0.5rem 0.5rem App.$dark-color;
     padding: 1rem;
     background: white;
+
+    @media (width <= (App.$screen-break-point-small)) {
+        box-shadow: 2.2vw 2.2vw App.$dark-color;
+    }
 }
 
 #board-grid-bg {

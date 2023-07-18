@@ -3,13 +3,16 @@
 $screen-bp: App.$screen-break-point-small;
 
 button {
-    height: 2rem;
+    $box-shadow-offset: 0.2rem;
+    $btn-height: 2rem;
+
+    height: $btn-height;
     width: min(12rem, 95%);
     background: App.$primary-color;
     border: none;
     border-radius: App.$border-radius-small;
     cursor: pointer;
-    box-shadow: 0.2rem 0.2rem App.$dark-color;
+    box-shadow: $box-shadow-offset $box-shadow-offset App.$dark-color;
     font-family: inherit;
     text-transform: uppercase;
     overflow: hidden;
@@ -17,13 +20,19 @@ button {
     text-overflow: ellipsis;
     transition: transform App.$transition-duration;
     color: #ffff;
+    margin-bottom: 15%;
 
     @media (width > $screen-bp) {
         font-size: App.$btn-font-size;
     }
 
     @media (width <= $screen-bp) {
-        font-size: 1.0rem;
+        $box-shadow-offset: $box-shadow-offset * App.$large-small-font-size-ratio;
+
+        box-shadow: $box-shadow-offset $box-shadow-offset App.$dark-color;
+        font-size: App.$btn-font-size * App.$large-small-font-size-ratio;
+        width: 100%;
+        height: $btn-height * App.$large-small-font-size-ratio;
     }
 
     &:hover {
