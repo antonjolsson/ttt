@@ -32,7 +32,8 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
         gridSize: 3,
         board: initBoard(3),
         ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
-        aiLevel: AILevel.EASY
+        aiLevel: AILevel.EASY,
+        draw: false
     };
 }
 
@@ -43,12 +44,12 @@ export class GameEngine {
         this._gameState = value;
     }
 
-    private checkForWinCondition(): void {
+    private checkForEndCondition(): void {
         const board = this._gameState.board
         const gridSize = this._gameState.gridSize
         const currentPlayer = this._gameState.currentPlayer
 
-        // Check horizontally
+        // Check for winner horizontally
         for (let i = 0; i < gridSize * gridSize; i += gridSize) {
             const row = board.slice(i, i + gridSize)
             if (row.every(square => square.player === currentPlayer)) {
@@ -76,6 +77,12 @@ export class GameEngine {
             this.onWinningRow(currentPlayer, row);
             return;
         }
+
+        // No winner, check for draw
+        const draw = board.every(square => square.player)
+        if (draw) {
+            this._gameState.draw = true
+        }
     }
 
     private onWinningRow(currentPlayer: Player, row: ISquare[]): void {
@@ -86,8 +93,8 @@ export class GameEngine {
 
     update(gameState: IGameState): IGameState {
         this._gameState = gameState
-        this.checkForWinCondition()
-        if (!this._gameState.winner) {
+        this.checkForEndCondition()
+        if (!this._gameState.winner && !this._gameState.draw) {
             this._gameState.currentPlayer = this.getNextPlayer(this._gameState.currentPlayer)
 
             if (this._gameState.currentPlayer === this._gameState.ai) {

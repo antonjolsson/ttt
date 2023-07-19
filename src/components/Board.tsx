@@ -31,7 +31,7 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
             gameCtxt.gameState.board[props.i].player = player
             const newState = props.gameEngine.update(gameCtxt.gameState)
             gameCtxt.setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner,
-                board: newState.board})
+                board: newState.board, draw: newState.draw})
         }
     }
 

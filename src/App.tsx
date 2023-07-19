@@ -15,7 +15,8 @@ export interface IGameState {
     gridSize: number,
     ai?: Player,
     winner?: Player,
-    aiLevel: AILevel
+    aiLevel: AILevel,
+    draw: boolean
 }
 
 export const GameStateContext = createContext({
@@ -25,17 +26,22 @@ export const GameStateContext = createContext({
 
 function App(): ReactElement {
     const [gameState, setGameState] = useState(getInitialGameState())
-    const [message, setMessage] = useState(getCurrentMessage(gameState.currentPlayer, gameState.winner))
+    const [message, setMessage] = useState(getCurrentMessage(gameState.currentPlayer, false, gameState.winner))
     const gameEngine = useRef(new GameEngine(gameState))
 
-    function getCurrentMessage(currentPlayer: Player, winner?: Player): string {
+    function getCurrentMessage(currentPlayer: Player, draw: boolean, winner?: Player): string {
         const playerName = currentPlayer === Player.CROSS ? 'Player one' : 'Player two'
-        return !winner ? `${playerName}'s turn...` : `${playerName} won!`;
+        if (winner) {
+            return `${playerName} won!`
+        } if (draw) {
+            return 'Draw!'
+        }
+        return `${playerName}'s turn...`
     }
 
     useEffect(() => {
-        setMessage(getCurrentMessage(gameState.currentPlayer, gameState.winner));
-    }, [gameState.currentPlayer, gameState.winner])
+        setMessage(getCurrentMessage(gameState.currentPlayer, gameState.draw, gameState.winner));
+    }, [gameState.currentPlayer, gameState.winner, gameState.draw])
 
     useEffect(() => {
         if (gameState.ai === gameState.currentPlayer) {
@@ -44,7 +50,7 @@ function App(): ReactElement {
             setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner,
                 board: newState.board})
         }
-    }, [gameState, gameState.ai])
+    }, [gameState.ai, gameState.board])
 
   return (
       <GameStateContext.Provider value={{gameState: gameState, setGameState: setGameState}}>
