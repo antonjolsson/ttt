@@ -25,13 +25,13 @@ export function initBoard(gridSize: number): ISquare[] {
     return board
 }
 
-export function getInitialGameState(): IGameState {
+export function getInitialGameState(oldGameState?: IGameState): IGameState {
     return {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
         gridSize: 3,
         board: initBoard(3),
-        ai: Player.CIRCLE,
+        ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
         aiLevel: AILevel.EASY
     };
 }
@@ -43,7 +43,7 @@ export class GameEngine {
         this._gameState = value;
     }
 
-    private checkAllRows(): void {
+    private checkForWinCondition(): void {
         const board = this._gameState.board
         const gridSize = this._gameState.gridSize
         const currentPlayer = this._gameState.currentPlayer
@@ -84,11 +84,31 @@ export class GameEngine {
         this._gameState = {...this._gameState, winner: currentPlayer, winningRow: row}
     }
 
-    update(): IGameState {
-        this.checkAllRows()
+    update(gameState: IGameState): IGameState {
+        this._gameState = gameState
+        this.checkForWinCondition()
         if (!this._gameState.winner) {
             this._gameState.currentPlayer = this._gameState.currentPlayer === Player.CROSS ? Player.CIRCLE : Player.CROSS
+
+            if (this._gameState.currentPlayer === this._gameState.ai) {
+                if (this._gameState.aiLevel === AILevel.EASY) {
+                    this.makeEasyAIMove()
+                } else {
+                    this.makeHardAIMove()
+                }
+                this.update(this._gameState)
+            }
         }
         return this._gameState
+    }
+
+    private makeHardAIMove(): void {
+        // TODO: Implement
+    }
+
+    private makeEasyAIMove(): void {
+        const freeSquares = this._gameState.board.filter(sq => !sq.player)
+        const index = Math.floor(freeSquares.length * Math.random())
+        freeSquares[index].player = this._gameState.currentPlayer
     }
 }

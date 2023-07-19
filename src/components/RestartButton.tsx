@@ -7,10 +7,10 @@ export function RestartButton(props: {gameEngine: GameEngine}): ReactElement {
     const gameCtxt = useContext(GameStateContext)
 
     function onClick(): void {
-        const initialState = getInitialGameState()
+        const initialState = getInitialGameState(gameCtxt.gameState)
         props.gameEngine.gameState = initialState
         gameCtxt.setGameState(initialState)
     }
 
-    return  <button onClick={onClick}>New Game</button>
+    return <button onClick={onClick}>New Game</button>
 }

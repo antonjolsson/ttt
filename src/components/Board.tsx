@@ -21,15 +21,17 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
         if (!player) {
             setSymbol('')
         }
-    }, [player, props.i])
+        setSymbol(!player ? '' : player)
+    }, [player])
 
     function onClick(): void {
         if (!player && !gameCtxt.gameState.winner) {
             const player = gameCtxt.gameState.currentPlayer
             setSymbol(playerToSymbolMap.get(player!)!)
             gameCtxt.gameState.board[props.i].player = player
-            const newState = props.gameEngine.update()
-            gameCtxt.setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner})
+            const newState = props.gameEngine.update(gameCtxt.gameState)
+            gameCtxt.setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner,
+                board: newState.board})
         }
     }
 
