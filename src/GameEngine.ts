@@ -32,7 +32,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
         gridSize: 3,
         board: initBoard(3),
         ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
-        aiLevel: AILevel.EASY,
+        aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
     };
 }
@@ -114,7 +114,7 @@ export class GameEngine {
     }
 
     private makeHardAIMove(): void {
-        // TODO: Implement
+        this.makeEasyAIMove()
     }
 
     private makeEasyAIMove(): void {
