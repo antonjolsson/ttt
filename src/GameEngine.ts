@@ -152,7 +152,7 @@ export class GameEngine {
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
-        const points = 1 / (depth ** 2)
+        const points = 1 / (depth ** 2) // test
         if (gameState.winner === gameState.ai) {
             outcomes.wins += points
             return outcomes
