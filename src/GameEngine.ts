@@ -140,7 +140,7 @@ export class GameEngine {
                 JSON.parse(JSON.stringify(this._gameState)), 1)
         })
         squaresData.sort((a, b) => this.getSquareOutcomePoints(b.outcomes) - this.getSquareOutcomePoints(a.outcomes))
-        console.log(squaresData)
+        // console.log(squaresData)
         this._gameState.board[squaresData[0].index].player = this._gameState.currentPlayer
     }
 
