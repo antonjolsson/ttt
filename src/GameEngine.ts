@@ -137,7 +137,7 @@ export class GameEngine {
         squaresData = squaresData.filter(data => !data.square.player)
         squaresData.forEach(square => {
             square.outcomes = this.getSquarePoints(square.index, square.outcomes,
-                JSON.parse(JSON.stringify(this._gameState)), 0)
+                JSON.parse(JSON.stringify(this._gameState)), 1)
         })
         squaresData.sort((a, b) => this.getSquareOutcomePoints(b.outcomes) - this.getSquareOutcomePoints(a.outcomes))
         console.log(squaresData)
@@ -152,14 +152,15 @@ export class GameEngine {
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
+        const points = 1 / (depth ** 2)
         if (gameState.winner === gameState.ai) {
-            outcomes.wins++
+            outcomes.wins += points
             return outcomes
         } else if (gameState.winner) {
-            outcomes.losses++
+            outcomes.losses += points
             return outcomes
         } else if (gameState.draw) {
-            outcomes.draws++
+            outcomes.draws += points
             return outcomes
         }
 
