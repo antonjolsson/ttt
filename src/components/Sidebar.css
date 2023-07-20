@@ -120,6 +120,14 @@ main #center {
   text-align: center;
   margin: 0.5rem auto;
 }
+@media (width <= 720px) and (width > 400px) {
+  #right h2 {
+    font-size: 0.9rem;
+  }
+  #right #sidebar {
+    padding: 0.15rem;
+  }
+}
 @media (width > 720px) {
   #right {
     justify-content: flex-start;
@@ -133,7 +141,7 @@ main #center {
     justify-content: flex-start;
   }
 }
-@media (width <= 400px) {
+@media (width <= 720px) {
   #right {
     width: 100%;
     background: white;

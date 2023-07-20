@@ -108,6 +108,13 @@ main #center {
   width: 100%;
   gap: 0.9rem;
 }
+@media (width <= 720px) and (width > 400px) {
+  .radio-button-control {
+    font-size: 0.85rem;
+    gap: 1.1rem;
+    padding: 0.225rem;
+  }
+}
 @media (width <= 400px) {
   .radio-button-control {
     font-size: min(1.1333333333rem, 7vw);
@@ -120,7 +127,7 @@ main #center {
   text-align: right;
   margin: 0;
 }
-@media (width <= 400px) {
+@media (width <= 720px) {
   .radio-button-control .control-label {
     width: 4rem;
   }
@@ -135,10 +142,15 @@ main #center {
     gap: 0.9333333333rem;
   }
 }
+@media (width <= 720px) and (width > 400px) {
+  .radio-button-control .options {
+    gap: 0.7rem;
+  }
+}
 .radio-button-control .options .option {
   transition: color 0.15s;
 }
-@media (width <= 400px) {
+@media (width <= 720px) {
   .radio-button-control .options .option {
     word-break: break-all;
   }

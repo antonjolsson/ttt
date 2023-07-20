@@ -25,6 +25,16 @@
         }
     }
 
+    @media (width <= (App.$screen-break-point-large)) and (width > (App.$screen-break-point-small)) {
+        h2 {
+            font-size: App.$h2-font-size / App.$large-small-font-size-ratio;
+        }
+
+        #sidebar {
+            padding: 0.2rem / App.$large-small-font-size-ratio;
+        }
+    }
+
     @media (width > (App.$screen-break-point-large)) {
         justify-content: flex-start;
         flex: 1 1 20%;
@@ -38,7 +48,7 @@
         }
     }
 
-    @media (width <= (App.$screen-break-point-small)) {
+    @media (width <= (App.$screen-break-point-large)) {
         width: 100%;
         background: white;
         border-radius: App.$border-radius-small;

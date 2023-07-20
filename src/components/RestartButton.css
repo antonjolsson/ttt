@@ -112,7 +112,6 @@ button {
   text-overflow: ellipsis;
   transition: transform 0.3s;
   color: white;
-  margin-bottom: 15%;
 }
 @media (width > 400px) {
   button {

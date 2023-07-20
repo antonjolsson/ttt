@@ -111,6 +111,7 @@ main #center {
   text-shadow: 0.2rem 0.2rem #333;
   margin-bottom: 3rem;
   padding: 0 0.5rem;
+  margin-top: 2rem;
 }
 @media (width <= 720px) {
   .app-header h1 {

@@ -20,7 +20,6 @@ button {
     text-overflow: ellipsis;
     transition: transform App.$transition-duration;
     color: #ffff;
-    margin-bottom: 15%;
 
     @media (width > $screen-bp) {
         font-size: App.$btn-font-size;

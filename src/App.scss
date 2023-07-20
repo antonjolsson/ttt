@@ -1,15 +1,18 @@
 // Colors
 $dark-color: #333;
-$low-contrast-dark-color: #555;
+$dark-color-hover: #555;
+$low-contrast-dark-color: $dark-color-hover;
 $primary-color: #ffa500;
 $light-hover-color: #eee;
 $light-gray: #ccc;
 $gray: #aaa;
+$dark-gray: #999;
 $accent-color: #00c087;
 
 // Font sizes
 $h1-font-size: 3rem;
 $h2-font-size: 1.2rem;
+$h3-font-size: 1rem;
 $btn-font-size: 0.85rem;
 $p-font-size-large: 16px;
 $p-font-size-small: 12px;
@@ -80,7 +83,6 @@ code {
     min-height: 100%;
 }
 
-// TODO: Fill entire (80%) width when <= $screen-break-point-small
 main {
     display: flex;
     flex-direction: column-reverse;
