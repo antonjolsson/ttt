@@ -124,8 +124,8 @@ main #center {
   border-radius: 1rem;
 }
 #board-grid-bg .square {
-  width: auto;
-  height: auto;
+  width: 86px;
+  height: 86px;
   background: white;
   transition: background 0.3s;
   display: flex;
@@ -147,6 +147,28 @@ main #center {
 #board-grid-bg .square.winning-square {
   animation: 0.05s fade-bg 11 alternate forwards;
   background: white;
+}
+#board-grid-bg .square.first-row {
+  height: calc(100% + 0.5px);
+  transform: translate(0, -0.5px);
+}
+#board-grid-bg .square.first-row.leftmost-column {
+  width: calc(100% + 0.5px);
+  transform: translate(-0.5px, -0.5px);
+}
+#board-grid-bg .square.first-row.rightmost-column {
+  width: calc(100% + 0.5px);
+  transform: translate(0, -0.5px);
+}
+#board-grid-bg .square.last-row {
+  height: calc(100% + 0.5px);
+}
+#board-grid-bg .square.leftmost-column {
+  width: calc(100% + 0.5px);
+  transform: translate(-0.5px, 0);
+}
+#board-grid-bg .square.rightmost-column {
+  width: calc(100% + 0.5px);
 }
 #board-grid-bg .square .symbol.cross {
   width: 90%;

@@ -51,6 +51,18 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
         } else if (gameCtxt.gameState.board[props.i].inWinningRow) {
             name += ' winning-square'
         }
+
+        const size = gameCtxt.gameState.gridSize
+        if (props.i < size) {
+            name += ' first-row'
+        } else if (props.i >= size * size - size) {
+            name += ' last-row'
+        }
+        if (props.i % size === 0) {
+            name += ' leftmost-column'
+        } else if ((props.i + 1) % size === 0) {
+            name += ' rightmost-column'
+        }
         return name
     }
 
