@@ -12,6 +12,7 @@ export interface IGameState {
     currentPlayer: Player,
     board: ISquare[],
     winningRow: ISquare[],
+    winningRowLength: number
     gridSize: number,
     ai?: Player,
     winner?: Player,

@@ -3,7 +3,7 @@ import './Sidebar.css'
 import {RadioButtonControl} from "./RadioButtonControl";
 import {InputControl} from "./InputControl";
 import {GameStateContext} from "../App";
-import {AILevel, Player} from "../GameEngine";
+import {AILevel, GameEngine, Player} from "../GameEngine";
 
 export function SideBar(): ReactElement {
     const gameCtxt = useContext(GameStateContext)
@@ -24,13 +24,19 @@ export function SideBar(): ReactElement {
         gameCtxt.setGameState({...gameCtxt.gameState, aiLevel: level})
     }
 
+    function onSelectGridSize(option: string): void {
+        gameCtxt.setGameState({...gameCtxt.gameState, gridSize: parseInt(option)})
+    }
+
     return <div id={'right'}>
         <section id={'sidebar'}>
-            <h2>AI</h2>
+            <h2>Options</h2>
             <RadioButtonControl label={'Player'} options={Array.from(aiToOptionString.values())} onSelect={onSelectAIPlayer}
                                 selected={aiToOptionString.get(gameCtxt.gameState.ai)!}/>
             <RadioButtonControl label={'Level'} options={Object.values(AILevel)} onSelect={onSelectAILevel}
                                 selected={String(gameCtxt.gameState.aiLevel)}/>
+            <RadioButtonControl options={GameEngine.ALLOWED_GRID_SIZES.map(n => String(n))} label={'Grid size'}
+                                selected={String(gameCtxt.gameState.gridSize)} onSelect={onSelectGridSize}/>
             <InputControl label={'Grid size'} default={3}/>
         </section>
     </div>;

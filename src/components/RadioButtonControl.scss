@@ -28,12 +28,12 @@
     }
 
     .control-label {
-        width: 3rem;
+        width: 4rem;
         text-align: right;
         margin: 0;
 
         @media (width <= (App.$screen-break-point-large)) {
-            width: 3rem * App.$large-small-font-size-ratio;
+            width: 4rem * App.$large-small-font-size-ratio;
         }
     }
 
@@ -52,6 +52,8 @@
 
         .option {
             transition: color App.$transition-duration-short;
+            word-break: keep-all;
+            white-space: nowrap;
 
             @media (width <= (App.$screen-break-point-large)) {
                 word-break: break-all;

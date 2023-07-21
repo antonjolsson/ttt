@@ -13,9 +13,10 @@ const playerToSymbolMap = new Map<Player, string>([
 
 function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
     const [symbol, setSymbol] = useState('')
+    // const [player, setPlayer] = useState<Player | undefined>(undefined)
     const gameCtxt = useContext(GameStateContext)
 
-    let player = gameCtxt.gameState.board[props.i].player
+    let player = gameCtxt.gameState.board[props.i]?.player
 
     useEffect(() => {
         if (!player) {
@@ -25,6 +26,7 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
     }, [player])
 
     function onClick(): void {
+        console.log(gameCtxt.gameState)
         if (!player && !gameCtxt.gameState.winner) {
             const player = gameCtxt.gameState.currentPlayer
             setSymbol(playerToSymbolMap.get(player!)!)
@@ -48,7 +50,7 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
         }
         if (!symbol && !gameCtxt.gameState.winner) {
             name += ' available'
-        } else if (gameCtxt.gameState.board[props.i].inWinningRow) {
+        } else if (gameCtxt.gameState.board[props.i]?.inWinningRow) {
             name += ' winning-square'
         }
 
@@ -74,13 +76,21 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
 export function Board(props: {gameEngine: GameEngine}): ReactElement {
     const gameStateCtxt = useContext(GameStateContext)
     const gridSize = gameStateCtxt.gameState.gridSize
+    const [gapSize, setGapSize] = useState('3%')
+
+    useEffect(() => {
+        setGapSize(`${9 / gridSize}%`)
+    }, [gridSize])
 
     function getGridAxisLayout(): string {
         return Array(gridSize).fill('1fr').join(' ');
     }
 
     return <div id={'board'}>
-        <div id={'board-grid-bg'} style={{gridTemplateRows: getGridAxisLayout(), gridTemplateColumns: getGridAxisLayout()}}>
+        <div id={'board-grid-bg'} style={{
+            gridTemplateRows: getGridAxisLayout(),
+            gridTemplateColumns: getGridAxisLayout(),
+            gap: gapSize}}>
             {Array(gridSize * gridSize).fill('').map((_, i) =>
                 <Square gameEngine={props.gameEngine} key={i} i={i}/>)}
         </div>

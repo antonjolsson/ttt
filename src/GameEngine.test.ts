@@ -6,6 +6,8 @@ let engine = new GameEngine(gameState)
 test('weighs outcomes by recursion depth', () => {
     gameState.ai = Player.CIRCLE
     gameState.aiLevel = AILevel.HARD
+    gameState.gridSize = 3
+    gameState.winningRowLength = 3
 
     gameState.board = [{}, {}, {player: Player.CIRCLE}, {}, {player: Player.CROSS}, {player: Player.CROSS},
         {player: Player.CROSS}, {}, {player: Player.CIRCLE}]

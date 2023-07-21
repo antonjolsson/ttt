@@ -35,8 +35,9 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
     return {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
-        gridSize: 3,
-        board: initBoard(3),
+        gridSize: GameEngine.ALLOWED_GRID_SIZES[1],
+        winningRowLength: 3,
+        board: initBoard(GameEngine.ALLOWED_GRID_SIZES[1]),
         ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
@@ -47,6 +48,7 @@ export class GameEngine {
     private aiLevelToRecursionDepth = new Map<AILevel, number>([
         [AILevel.HARD, 10]
     ])
+    static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
 
     constructor(private _gameState: IGameState) {}
 

@@ -119,7 +119,6 @@ main #center {
 #board-grid-bg {
   background: #333;
   display: grid;
-  gap: 3%;
   aspect-ratio: 1;
   border-radius: 1rem;
 }

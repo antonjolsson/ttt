@@ -124,16 +124,18 @@ main #center {
   width: 100%;
   text-align: center;
   margin: 0.5rem auto;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.2rem;
 }
 @media (width <= 400px) {
   #right #sidebar h2 {
-    font-size: 1.36rem;
+    font-size: 1.92rem;
   }
 }
 @media (width <= 720px) and (width > 400px) {
-  #right h2 {
-    font-size: 0.85rem;
-  }
   #right #sidebar {
     padding: 0.125rem;
   }
