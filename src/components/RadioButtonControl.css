@@ -17,7 +17,7 @@ html {
 }
 @media (width <= 400px) {
   html {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
@@ -74,7 +74,7 @@ main #center {
 }
 @media (width <= 720px) {
   main #center {
-    margin-top: 1.2rem;
+    margin-top: 1rem;
   }
 }
 @media (width <= 400px) {
@@ -117,13 +117,13 @@ main #center {
   .radio-button-control {
     font-size: 0.85rem;
     gap: 1.1rem;
-    padding: 0.225rem;
+    padding: 0.1875rem;
   }
 }
 @media (width <= 400px) {
   .radio-button-control {
-    font-size: min(1.1333333333rem, 7vw);
-    gap: 1.4666666667rem;
+    font-size: min(1.36rem, 7vw);
+    gap: 1.76rem;
     padding: 0.3rem;
   }
 }
@@ -134,7 +134,7 @@ main #center {
 }
 @media (width <= 720px) {
   .radio-button-control .control-label {
-    width: 4rem;
+    width: 4.8rem;
   }
 }
 .radio-button-control .options {
@@ -144,7 +144,7 @@ main #center {
 }
 @media (width <= 400px) {
   .radio-button-control .options {
-    gap: 0.9333333333rem;
+    gap: 1.12rem;
   }
 }
 @media (width <= 720px) and (width > 400px) {

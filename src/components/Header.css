@@ -18,7 +18,7 @@ html {
 }
 @media (width <= 400px) {
   html {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
@@ -75,7 +75,7 @@ main #center {
 }
 @media (width <= 720px) {
   main #center {
-    margin-top: 1.2rem;
+    margin-top: 1rem;
   }
 }
 @media (width <= 400px) {
@@ -114,7 +114,7 @@ main #center {
   color: #ffa500;
   text-transform: uppercase;
   text-shadow: 0.2666666667rem 0.2666666667rem #333;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   padding: 0 0.5rem;
   margin-top: 2rem;
   letter-spacing: 1.3rem;
@@ -128,8 +128,9 @@ main #center {
 }
 @media (width <= 400px) {
   .app-header h1 {
-    text-shadow: 0.3555555556rem 0.3555555556rem #333;
-    font-size: 5.3333333333rem;
+    text-shadow: 0.4266666667rem 0.4266666667rem #333;
+    font-size: 6.4rem;
+    margin-bottom: 2.56rem;
   }
 }
 

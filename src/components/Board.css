@@ -17,7 +17,7 @@ html {
 }
 @media (width <= 400px) {
   html {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
@@ -74,7 +74,7 @@ main #center {
 }
 @media (width <= 720px) {
   main #center {
-    margin-top: 1.2rem;
+    margin-top: 1rem;
   }
 }
 @media (width <= 400px) {
@@ -124,8 +124,8 @@ main #center {
   border-radius: 1rem;
 }
 #board-grid-bg .square {
-  width: 86px;
-  height: 86px;
+  width: auto;
+  height: auto;
   background: white;
   transition: background 0.3s;
   display: flex;

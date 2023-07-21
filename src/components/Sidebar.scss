@@ -22,12 +22,16 @@
             width: 100%;
             text-align: center;
             margin: 0.5rem auto;
+
+            @media (width <= (App.$screen-break-point-small)) {
+                font-size: App.$btn-font-size * App.$large-small-font-size-ratio;
+            }
         }
     }
 
     @media (width <= (App.$screen-break-point-large)) and (width > (App.$screen-break-point-small)) {
         h2 {
-            font-size: App.$h2-font-size / App.$large-small-font-size-ratio;
+            font-size: App.$btn-font-size;
         }
 
         #sidebar {

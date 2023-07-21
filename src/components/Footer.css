@@ -17,7 +17,7 @@ html {
 }
 @media (width <= 400px) {
   html {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
@@ -74,7 +74,7 @@ main #center {
 }
 @media (width <= 720px) {
   main #center {
-    margin-top: 1.2rem;
+    margin-top: 1rem;
   }
 }
 @media (width <= 400px) {
@@ -111,11 +111,11 @@ main #center {
 #footer #source-link {
   text-transform: uppercase;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #999;
   letter-spacing: 0.04rem;
   transition: all 0.3s;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   margin-top: 1rem;
 }
 #footer #source-link:visited {
@@ -127,10 +127,10 @@ main #center {
 
 @media (width > 400px) {
   #footer #source-link {
-    font-size: 0.6375rem;
-    margin-bottom: 1.5rem;
+    font-size: 0.625rem;
+    margin-bottom: 2rem;
     margin-top: 1rem;
-    letter-spacing: 0.03rem;
+    letter-spacing: 0.025rem;
   }
 }
 

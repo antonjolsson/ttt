@@ -23,8 +23,8 @@
     .square {
         $extra-border-margin: 0.5px;
 
-        width: 86px;
-        height: 86px;
+        width: auto;
+        height: auto;
         background: white;
         transition: background App.$transition-duration;
         display: flex;
