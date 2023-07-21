@@ -47,6 +47,11 @@ code {
   height: unset;
   min-height: 100%;
 }
+@supports (-moz-appearance: none) {
+  .app {
+    background: #ddd;
+  }
+}
 
 main {
   display: flex;

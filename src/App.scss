@@ -81,6 +81,11 @@ code {
     overflow: auto;
     height: unset;
     min-height: 100%;
+
+    // Skip gradient in Firefox due to banding
+    @supports (-moz-appearance:none) {
+        background: #ddd;
+    }
 }
 
 main {
