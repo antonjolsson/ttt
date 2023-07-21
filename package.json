@@ -1,6 +1,6 @@
 {
-  "name": "tic-tac-toe",
-  "homepage": "https://antonjolsson.github.io/tic-tac-toe",
+  "name": "ttt",
+  "homepage": "https://antonjolsson.github.io/ttt",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
