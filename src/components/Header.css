@@ -6,7 +6,7 @@
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 4rem;
 }
 
 h2 {
@@ -108,10 +108,12 @@ main #center {
   text-align: center;
   color: #ffa500;
   text-transform: uppercase;
-  text-shadow: 0.2rem 0.2rem #333;
+  text-shadow: 0.2666666667rem 0.2666666667rem #333;
   margin-bottom: 3rem;
   padding: 0 0.5rem;
   margin-top: 2rem;
+  letter-spacing: 1.3rem;
+  font-style: italic;
 }
 @media (width <= 720px) {
   .app-header h1 {
@@ -120,8 +122,8 @@ main #center {
 }
 @media (width <= 400px) {
   .app-header h1 {
-    text-shadow: 0.2666666667rem 0.2666666667rem #333;
-    font-size: 4rem;
+    text-shadow: 0.3555555556rem 0.3555555556rem #333;
+    font-size: 5.3333333333rem;
   }
 }
 

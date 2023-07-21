@@ -21,6 +21,8 @@
         margin-bottom: 3rem;
         padding: 0 0.5rem;
         margin-top: 2rem;
+        letter-spacing: 1.3rem;
+        font-style: italic;
 
         @media (width <= (App.$screen-break-point-large)) {
             margin-bottom: 3rem - App.$row-gap;

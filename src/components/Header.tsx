@@ -3,6 +3,6 @@ import './Header.css'
 
 export function Header(): ReactElement {
     return <header className="app-header">
-        <h1>Tic-Tac-Toe</h1>
+        <h1>TTT</h1>
     </header>;
 }
