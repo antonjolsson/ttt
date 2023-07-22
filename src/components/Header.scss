@@ -25,7 +25,8 @@
         font-style: italic;
 
         @media (width <= (App.$screen-break-point-large)) {
-            margin-bottom: 3rem - App.$row-gap;
+            margin-bottom: App.$row-gap;
+            line-height: App.$h1-font-size;
         }
 
         // TODO: Size proportional to vw on very small devices

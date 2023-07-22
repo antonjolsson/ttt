@@ -122,7 +122,8 @@ main #center {
 }
 @media (width <= 720px) {
   .app-header h1 {
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.6rem;
+    line-height: 4rem;
   }
 }
 @media (width <= 400px) {
