@@ -35,10 +35,10 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
     return {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
-        gridSize: GameEngine.ALLOWED_GRID_SIZES[1],
-        winningRowLength: 3,
-        board: initBoard(GameEngine.ALLOWED_GRID_SIZES[1]),
-        ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
+        gridSize: oldGameState?.gridSize ?? GameEngine.ALLOWED_GRID_SIZES[1],
+        winningRowLength: oldGameState?.winningRowLength ?? 3,
+        board: initBoard(oldGameState?.gridSize ?? GameEngine.ALLOWED_GRID_SIZES[1]),
+        ai: oldGameState ? oldGameState.ai : undefined,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
     };
@@ -60,31 +60,48 @@ export class GameEngine {
         const board = gameState.board
         const gridSize = gameState.gridSize
         const currentPlayer = gameState.currentPlayer
+        const winningLength = gameState.winningRowLength
+
+        function getWinSequence(row: ISquare[]): ISquare[] | null {
+            for (let i = 0; i <= gridSize - winningLength; i++) {
+                const sequence = row.slice(i, i + winningLength)
+                if (sequence.every(square => square.player === currentPlayer)) {
+                    return sequence
+                }
+            }
+            return null
+        }
 
         // Check for winner horizontally
         for (let i = 0; i < gridSize * gridSize; i += gridSize) {
             const row = board.slice(i, i + gridSize)
-            if (row.every(square => square.player === currentPlayer)) {
-                return this.onWinningRow(currentPlayer, row, gameState);
+            const winSequence = getWinSequence(row);
+            if (winSequence) {
+                return this.onWinningRow(currentPlayer, winSequence, gameState)
             }
         }
 
         // Check vertically
-        for (let i = 0; i < gridSize; i++) {
-            const row = board.filter((_, j) => j % gridSize === i)
-            if (row.every(square => square.player === currentPlayer)) {
-                return this.onWinningRow(currentPlayer, row, gameState)
+        for (let column = 0; column < gridSize; column++) {
+            const row = board.filter((_, i) => i % gridSize === column)
+            const winSequence = getWinSequence(row);
+            if (winSequence) {
+                return this.onWinningRow(currentPlayer, winSequence, gameState)
             }
         }
 
-        // Check diagonally
-        let row = board.filter((_, j) => j % 4 === 0)
-        if (row.every(square => square.player === currentPlayer)) {
-            return this.onWinningRow(currentPlayer, row, gameState);
+        // Check diagonally nw - sw
+        let row = board.filter((_, j) => j % (gridSize + 1) === 0)
+        let winSequence = getWinSequence(row);
+        if (winSequence) {
+            return this.onWinningRow(currentPlayer, winSequence, gameState)
         }
+
+        // Check diagonally sw - ne
         row = board.filter((_, j) => j !== 0 && j < gridSize * gridSize - 1 && j % (gridSize - 1) === 0)
-        if (row.every(square => square.player === currentPlayer)) {
-            return this.onWinningRow(currentPlayer, row, gameState);
+        winSequence = getWinSequence(row);
+        if (winSequence) {
+            return this.onWinningRow(currentPlayer, winSequence, gameState)
         }
 
         // No winner, check for draw

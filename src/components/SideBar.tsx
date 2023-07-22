@@ -31,7 +31,7 @@ export function SideBar(): ReactElement {
     return <div id={'right'}>
         <section id={'sidebar'}>
             <h2>Options</h2>
-            <RadioButtonControl label={'Player'} options={Array.from(aiToOptionString.values())} onSelect={onSelectAIPlayer}
+            <RadioButtonControl label={'AI'} options={Array.from(aiToOptionString.values())} onSelect={onSelectAIPlayer}
                                 selected={aiToOptionString.get(gameCtxt.gameState.ai)!}/>
             <RadioButtonControl label={'Level'} options={Object.values(AILevel)} onSelect={onSelectAILevel}
                                 selected={String(gameCtxt.gameState.aiLevel)}/>
