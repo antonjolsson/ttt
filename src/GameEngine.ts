@@ -18,7 +18,8 @@ export interface ISquare {
 export interface ISquareOutcomes {
     wins: number,
     draws: number,
-    losses: number
+    losses: number,
+    points: number
 }
 
 // TODO: Move inside class
@@ -142,7 +143,8 @@ export class GameEngine {
                 outcomes: {
                     wins: 0,
                     draws: 0,
-                    losses: 0
+                    losses: 0,
+                    points: 0
                 }
             }
         })
@@ -151,27 +153,26 @@ export class GameEngine {
             square.outcomes = this.getSquarePoints(square.index, square.outcomes,
                 JSON.parse(JSON.stringify(gameState)), 1)
         })
-        squaresData.sort((a, b) => this.getSquareOutcomePoints(b.outcomes) - this.getSquareOutcomePoints(a.outcomes))
+        squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
+        // console.log(squaresData)
         gameState.board[squaresData[0].index].player = gameState.currentPlayer
-    }
-
-    private getSquareOutcomePoints(outcomes: ISquareOutcomes): number {
-        const totalOutcomes = outcomes.wins + outcomes.draws + outcomes.losses
-        return (outcomes.wins - outcomes.losses) / totalOutcomes
     }
 
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
-        const points = 1 / (depth ** 2)
+        const points = this.getBaseOutcomePoints(depth)
         if (gameState.winner === gameState.ai) {
             outcomes.wins += points
+            this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.winner) {
             outcomes.losses += points
+            this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.draw) {
             outcomes.draws += points
+            this.setSquareOutcomePoints(outcomes)
             return outcomes
         }
 
@@ -189,7 +190,16 @@ export class GameEngine {
         return freeSquares.map(data => {
             return this.getSquarePoints(data.index, outcomes, JSON.parse(JSON.stringify(gameState)), ++depth)
         })
-            .sort((a, b) => this.getSquareOutcomePoints(b) - this.getSquareOutcomePoints(a))[0]
+            .sort((a, b) => b.points - a.points)[0]
+    }
+
+    private getBaseOutcomePoints(recursionDepth: number): number {
+        return 1 / (recursionDepth ** 3);
+    }
+
+    private setSquareOutcomePoints(outcomes: ISquareOutcomes): void {
+        const totalOutcomes = outcomes.wins + outcomes.draws + outcomes.losses
+        outcomes.points = (outcomes.wins - outcomes.losses) / totalOutcomes
     }
 
     private makeEasyAIMove(gameState: IGameState): IGameState {
