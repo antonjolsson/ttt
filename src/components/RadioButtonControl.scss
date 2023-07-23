@@ -35,6 +35,10 @@
         @media (width <= (App.$screen-break-point-large)) {
             width: 4rem * App.$large-small-font-size-ratio;
         }
+
+        &.disabled {
+            color: App.$dark-gray;
+        }
     }
 
     .options {
@@ -69,11 +73,17 @@
                         color: inherit;
                     }
                 }
+
+                &.disabled {
+                    color: App.$light-gray;
+                }
+            }
+
+            &.selected {
+                &.disabled {
+                    color: App.$dark-gray;
+                }
             }
         }
-    }
-
-    .disabled {
-        color: App.$light-gray;
     }
 }

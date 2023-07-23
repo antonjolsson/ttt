@@ -137,6 +137,9 @@ main #center {
     width: 6.4rem;
   }
 }
+.radio-button-control .control-label.disabled {
+  color: #999;
+}
 .radio-button-control .options {
   display: flex;
   flex-direction: row;
@@ -171,8 +174,11 @@ main #center {
 .radio-button-control .options .option.unselected:not(.disabled):hover {
   color: inherit;
 }
-.radio-button-control .disabled {
+.radio-button-control .options .option.unselected.disabled {
   color: #ccc;
+}
+.radio-button-control .options .option.selected.disabled {
+  color: #999;
 }
 
 /*# sourceMappingURL=RadioButtonControl.css.map */

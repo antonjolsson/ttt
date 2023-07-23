@@ -1,12 +1,17 @@
-import React, {ReactElement, useContext} from "react";
+import React, {ReactElement, useContext, useEffect, useState} from "react";
 import './Sidebar.css'
 import {RadioButtonControl} from "./RadioButtonControl";
 import {InputControl} from "./InputControl";
 import {GameStateContext} from "../App";
-import {AILevel, GameEngine, Player} from "../GameEngine";
+import {AILevel, GameEngine, getInitialGameState, Player} from "../GameEngine";
 
 export function SideBar(): ReactElement {
     const gameCtxt = useContext(GameStateContext)
+    const [gameRunning, setGameRunning] = useState(gameCtxt.gameState.board.some(s => s.player))
+
+    useEffect(() => {
+        setGameRunning(gameCtxt.gameState.board.some(s => s.player))
+    }, [gameCtxt.gameState.board, gameCtxt.gameState.currentPlayer, gameCtxt.gameState.winner])
 
     const aiToOptionString = new Map<Player | undefined, string>([
         [undefined, 'None'],
@@ -25,7 +30,12 @@ export function SideBar(): ReactElement {
     }
 
     function onSelectGridSize(option: string): void {
-        gameCtxt.setGameState({...gameCtxt.gameState, gridSize: parseInt(option)})
+        if (gameRunning) {
+            return
+        }
+        gameCtxt.gameState.gridSize = parseInt(option)
+        const newState = getInitialGameState(gameCtxt.gameState)
+        gameCtxt.setGameState(newState)
     }
 
     return <div id={'right'}>
@@ -36,8 +46,9 @@ export function SideBar(): ReactElement {
             <RadioButtonControl label={'Level'} options={Object.values(AILevel)} onSelect={onSelectAILevel}
                                 selected={String(gameCtxt.gameState.aiLevel)}/>
             <RadioButtonControl options={GameEngine.ALLOWED_GRID_SIZES.map(n => String(n))} label={'Grid size'}
-                                selected={String(gameCtxt.gameState.gridSize)} onSelect={onSelectGridSize}/>
-            <InputControl label={'Grid size'} default={3}/>
+                                selected={String(gameCtxt.gameState.gridSize)} onSelect={onSelectGridSize}
+                                disabled={gameRunning}/>
+            <InputControl label={'Grid size'} default={GameEngine.ALLOWED_GRID_SIZES[0]}/>
         </section>
     </div>;
 }

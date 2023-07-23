@@ -13,7 +13,6 @@ const playerToSymbolMap = new Map<Player, string>([
 
 function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
     const [symbol, setSymbol] = useState('')
-    // const [player, setPlayer] = useState<Player | undefined>(undefined)
     const gameCtxt = useContext(GameStateContext)
 
     let player = gameCtxt.gameState.board[props.i]?.player
@@ -26,14 +25,12 @@ function Square(props: { gameEngine: GameEngine, i: number }): ReactElement {
     }, [player])
 
     function onClick(): void {
-        console.log(gameCtxt.gameState)
         if (!player && !gameCtxt.gameState.winner) {
             const player = gameCtxt.gameState.currentPlayer
             setSymbol(playerToSymbolMap.get(player!)!)
             gameCtxt.gameState.board[props.i].player = player
-            const newState = props.gameEngine.update(gameCtxt.gameState)
-            gameCtxt.setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner,
-                board: newState.board, draw: newState.draw})
+            props.gameEngine.update(gameCtxt.gameState)
+            gameCtxt.setGameState({...gameCtxt.gameState, board: [...gameCtxt.gameState.board]})
         }
     }
 

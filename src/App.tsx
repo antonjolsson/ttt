@@ -28,7 +28,7 @@ export const GameStateContext = createContext({
 function App(): ReactElement {
     const [gameState, setGameState] = useState(getInitialGameState())
     const [message, setMessage] = useState(getCurrentMessage(gameState.currentPlayer, false, gameState.winner))
-    const gameEngine = useRef(new GameEngine(gameState))
+    const gameEngine = useRef(new GameEngine())
 
     function getCurrentMessage(currentPlayer: Player, draw: boolean, winner?: Player): string {
         const playerName = currentPlayer === Player.CROSS ? 'Player one' : 'Player two'
@@ -44,12 +44,12 @@ function App(): ReactElement {
         setMessage(getCurrentMessage(gameState.currentPlayer, gameState.draw, gameState.winner));
     }, [gameState.currentPlayer, gameState.winner, gameState.draw])
 
+    // New turn
     useEffect(() => {
         if (gameState.ai === gameState.currentPlayer) {
             gameState.currentPlayer = gameEngine.current.getNextPlayer(gameState.currentPlayer)
-            const newState = gameEngine.current.update(gameState)
-            setGameState({...newState, currentPlayer: newState.currentPlayer, winner: newState.winner,
-                board: newState.board})
+            gameEngine.current.update(gameState)
+            setGameState({...gameState, board: [...gameState.board]})
         }
     }, [gameState.ai, gameState.board])
 

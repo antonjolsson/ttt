@@ -32,12 +32,13 @@ export function initBoard(gridSize: number): ISquare[] {
 }
 
 export function getInitialGameState(oldGameState?: IGameState): IGameState {
+    const board = initBoard(oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0])
     return {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
-        gridSize: oldGameState?.gridSize ?? GameEngine.ALLOWED_GRID_SIZES[1],
+        gridSize: oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0],
         winningRowLength: oldGameState?.winningRowLength ?? 3,
-        board: initBoard(oldGameState?.gridSize ?? GameEngine.ALLOWED_GRID_SIZES[1]),
+        board: board,
         ai: oldGameState ? oldGameState.ai : undefined,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
@@ -49,12 +50,6 @@ export class GameEngine {
         [AILevel.HARD, 10]
     ])
     static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
-
-    constructor(private _gameState: IGameState) {}
-
-    set gameState(value: IGameState) {
-        this._gameState = value;
-    }
 
     private checkForEndCondition(gameState: IGameState): IGameState {
         const board = gameState.board
@@ -116,33 +111,31 @@ export class GameEngine {
     private onWinningRow(currentPlayer: Player, row: ISquare[], gameState: IGameState): IGameState {
         gameState.winner = currentPlayer
         row.forEach(square => square.inWinningRow = true)
-        return {...this._gameState, winner: currentPlayer, winningRow: row}
+        return {...gameState, winner: currentPlayer, winningRow: row}
     }
 
-    update(gameState: IGameState): IGameState {
-        this._gameState = gameState
-        this._gameState = this.checkForEndCondition(this._gameState)
-        if (!this._gameState.winner && !this._gameState.draw) {
-            this._gameState.currentPlayer = this.getNextPlayer(this._gameState.currentPlayer)
+    update(gameState: IGameState): void {
+        this.checkForEndCondition(gameState)
+        if (!gameState.winner && !gameState.draw) {
+            gameState.currentPlayer = this.getNextPlayer(gameState.currentPlayer)
 
-            if (this._gameState.currentPlayer === this._gameState.ai) {
-                if (this._gameState.aiLevel === AILevel.EASY) {
-                    this.makeEasyAIMove()
+            if (gameState.currentPlayer === gameState.ai) {
+                if (gameState.aiLevel === AILevel.EASY) {
+                    this.makeEasyAIMove(gameState)
                 } else {
-                    this.makeHardAIMove()
+                    this.makeHardAIMove(gameState)
                 }
-                this.update(this._gameState)
+                this.update(gameState)
             }
         }
-        return this._gameState
     }
 
     getNextPlayer(currentPlayer: Player): Player {
         return currentPlayer === Player.CROSS ? Player.CIRCLE : Player.CROSS;
     }
 
-    private makeHardAIMove(): void {
-        let squaresData = this._gameState.board.map((square, index) => {
+    private makeHardAIMove(gameState: IGameState): void {
+        let squaresData = gameState.board.map((square, index) => {
             return {
                 square: square,
                 index: index,
@@ -156,11 +149,10 @@ export class GameEngine {
         squaresData = squaresData.filter(data => !data.square.player)
         squaresData.forEach(square => {
             square.outcomes = this.getSquarePoints(square.index, square.outcomes,
-                JSON.parse(JSON.stringify(this._gameState)), 1)
+                JSON.parse(JSON.stringify(gameState)), 1)
         })
         squaresData.sort((a, b) => this.getSquareOutcomePoints(b.outcomes) - this.getSquareOutcomePoints(a.outcomes))
-        // console.log(squaresData)
-        this._gameState.board[squaresData[0].index].player = this._gameState.currentPlayer
+        gameState.board[squaresData[0].index].player = gameState.currentPlayer
     }
 
     private getSquareOutcomePoints(outcomes: ISquareOutcomes): number {
@@ -200,9 +192,10 @@ export class GameEngine {
             .sort((a, b) => this.getSquareOutcomePoints(b) - this.getSquareOutcomePoints(a))[0]
     }
 
-    private makeEasyAIMove(): void {
-        const freeSquares = this._gameState.board.filter(sq => !sq.player)
+    private makeEasyAIMove(gameState: IGameState): IGameState {
+        const freeSquares = gameState.board.filter(sq => !sq.player)
         const index = Math.floor(freeSquares.length * Math.random())
-        freeSquares[index].player = this._gameState.currentPlayer
+        freeSquares[index].player = gameState.currentPlayer
+        return gameState
     }
 }
