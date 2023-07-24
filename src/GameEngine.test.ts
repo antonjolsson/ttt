@@ -1,11 +1,23 @@
-import {AILevel, GameEngine, getInitialGameState, Player} from "./GameEngine";
+import {GameEngine, getInitialGameState, Player} from "./GameEngine";
 
 let gameState = getInitialGameState()
 let engine = new GameEngine()
 
-test('weighs outcomes by recursion depth', () => {
-    gameState.ai = Player.CIRCLE
-    gameState.currentPlayer = Player.CROSS // Will change to AI's turn when calling update
+function initTest(ai: Player, currentPlayer: Player): void {
+    gameState = getInitialGameState()
+    gameState.ai = ai
+    gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
+}
+
+test('board size 3: always start in center square', () => {
+    initTest(Player.CROSS, Player.CROSS);
+
+    engine.update(gameState)
+    expect(gameState.board[4].player).toBe(Player.CROSS)
+})
+
+test('board size 3: weighs outcomes by recursion depth', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [{}, {}, {player: Player.CIRCLE}, {}, {player: Player.CROSS}, {player: Player.CROSS},
         {player: Player.CROSS}, {}, {player: Player.CIRCLE}]
@@ -15,9 +27,28 @@ test('weighs outcomes by recursion depth', () => {
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-test('avoids trivial loss', () => {
-    gameState.ai = Player.CIRCLE
-    gameState.currentPlayer = Player.CROSS // Will change to AI's turn when calling update
+test('board size 3: always wins when starting and opponent doesn\'t choose corner', () => {
+    initTest(Player.CROSS, Player.CROSS);
+
+    gameState.board = [
+        {}, {}, {},
+        {}, {player: Player.CROSS}, {},
+        {}, {player: Player.CIRCLE}, {}]
+
+    engine.update(gameState)
+    expect(gameState.board[6].player).toBe(Player.CROSS)
+
+    gameState.board[2].player = Player.CIRCLE
+    engine.update(gameState)
+    expect(gameState.board[0].player).toBe(Player.CROSS)
+
+    gameState.board[8].player = Player.CIRCLE
+    engine.update(gameState)
+    expect(gameState.winner).toBe(Player.CROSS)
+})
+
+test('board size 3: avoids trivial loss #1', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [
         {}, {}, {},
@@ -25,8 +56,19 @@ test('avoids trivial loss', () => {
         {}, {player: Player.CROSS}, {player: Player.CIRCLE}]
 
     engine.update(gameState)
-    console.log(gameState)
 
     expect(gameState.board[1].player).toBe(Player.CIRCLE)
+})
+
+test('board size 3: avoids trivial loss #2', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
+
+    gameState.board = [
+        {}, {}, {},
+        {}, {player: Player.CROSS}, {player: Player.CROSS},
+        {}, {}, {player: Player.CIRCLE}]
+
+    engine.update(gameState)
+    expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 

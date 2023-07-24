@@ -22,6 +22,12 @@ export interface ISquareOutcomes {
     points: number
 }
 
+export enum GameOutcome {
+    WIN = 'win',
+    DRAW = 'draw',
+    LOSS = 'loss'
+}
+
 // TODO: Move inside class
 export function initBoard(gridSize: number): ISquare[] {
     const board: ISquare[] = []
@@ -40,7 +46,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
         gridSize: oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0],
         winningRowLength: oldGameState?.winningRowLength ?? 3,
         board: board,
-        ai: oldGameState ? oldGameState.ai : undefined,
+        ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
     };
@@ -48,7 +54,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
 
 export class GameEngine {
     private aiLevelToRecursionDepth = new Map<AILevel, number>([
-        [AILevel.HARD, 10]
+        [AILevel.HARD, 6]
     ])
     static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
 
@@ -161,17 +167,16 @@ export class GameEngine {
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
-        const points = this.getBaseOutcomePoints(depth)
         if (gameState.winner === gameState.ai) {
-            outcomes.wins += points
+            outcomes.wins += this.getBaseOutcomePoints(depth, GameOutcome.WIN)
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.winner) {
-            outcomes.losses += points
+            outcomes.losses += this.getBaseOutcomePoints(depth, GameOutcome.LOSS)
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.draw) {
-            outcomes.draws += points
+            outcomes.draws += this.getBaseOutcomePoints(depth, GameOutcome.DRAW)
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         }
@@ -188,12 +193,16 @@ export class GameEngine {
         )
             .filter(data => !data.square.player)
         return freeSquares.map(data => {
-            return this.getSquarePoints(data.index, outcomes, JSON.parse(JSON.stringify(gameState)), ++depth)
+            return this.getSquarePoints(data.index, outcomes, JSON.parse(JSON.stringify(gameState)), depth + 1)
         })
             .sort((a, b) => b.points - a.points)[0]
     }
 
-    private getBaseOutcomePoints(recursionDepth: number): number {
+    private getBaseOutcomePoints(recursionDepth: number, outcome:  GameOutcome): number {
+        // Give immediate win or avoiding loss in next turn highest priority
+        if ((recursionDepth === 1 && outcome === GameOutcome.WIN) || (recursionDepth === 2 && outcome === GameOutcome.LOSS)) {
+            return Number.MAX_SAFE_INTEGER
+        }
         return 1 / (recursionDepth ** 3);
     }
 
