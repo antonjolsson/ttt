@@ -3,10 +3,11 @@ import {GameEngine, getInitialGameState, Player} from "./GameEngine";
 let gameState = getInitialGameState()
 let engine = new GameEngine()
 
-function initTest(ai: Player, currentPlayer: Player): void {
-    gameState = getInitialGameState()
+function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
+    gameState = getInitialGameState(gameState)
     gameState.ai = ai
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
+    gameState.gridSize = gridSize
 }
 
 test('board size 3: always start in center square', () => {
@@ -71,4 +72,14 @@ test('board size 3: avoids trivial loss #2', () => {
     engine.update(gameState)
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
+
+/*test('board size 4: ai response time < 500 ms', () => {
+    initTest(Player.CROSS, Player.CROSS, 4);
+
+    const startTime = Date.now()
+    engine.update(gameState)
+    const timeTaken = Date.now() - startTime
+
+    expect(timeTaken).toBeLessThanOrEqual(500)
+})*/
 

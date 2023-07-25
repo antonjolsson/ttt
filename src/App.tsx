@@ -51,7 +51,7 @@ function App(): ReactElement {
             gameEngine.current.update(gameState)
             setGameState({...gameState, board: [...gameState.board]})
         }
-    }, [gameState.ai, gameState.board])
+    }, [gameState.ai, gameState.board, gameState.currentPlayer])
 
   return (
       <GameStateContext.Provider value={{gameState: gameState, setGameState: setGameState}}>

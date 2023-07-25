@@ -16,9 +16,11 @@ export interface ISquare {
 }
 
 export interface ISquareOutcomes {
-    wins: number,
-    draws: number,
-    losses: number,
+    winPoints: number,
+    drawPoints: number,
+    lossPoints: number,
+    imminentWin: boolean,
+    imminentLoss: boolean,
     points: number
 }
 
@@ -147,20 +149,25 @@ export class GameEngine {
                 square: square,
                 index: index,
                 outcomes: {
-                    wins: 0,
-                    draws: 0,
-                    losses: 0,
-                    points: 0
+                    winPoints: 0,
+                    drawPoints: 0,
+                    lossPoints: 0,
+                    points: 0,
+                    imminentWin: false,
+                    imminentLoss: false
                 }
             }
         })
         squaresData = squaresData.filter(data => !data.square.player)
-        squaresData.forEach(square => {
+        for (let i = 0; i < squaresData.length; i++){
+            const square = squaresData[i];
             square.outcomes = this.getSquarePoints(square.index, square.outcomes,
                 JSON.parse(JSON.stringify(gameState)), 1)
-        })
+            if (square.outcomes.imminentWin) {
+                break
+            }
+        }
         squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
-        // console.log(squaresData)
         gameState.board[squaresData[0].index].player = gameState.currentPlayer
     }
 
@@ -168,15 +175,21 @@ export class GameEngine {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
         if (gameState.winner === gameState.ai) {
-            outcomes.wins += this.getBaseOutcomePoints(depth, GameOutcome.WIN)
+            outcomes.winPoints += this.getBaseOutcomePoints(depth, GameOutcome.WIN)
+            if (depth === 1) {
+                outcomes.imminentWin = true
+            }
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.winner) {
-            outcomes.losses += this.getBaseOutcomePoints(depth, GameOutcome.LOSS)
+            outcomes.lossPoints += this.getBaseOutcomePoints(depth, GameOutcome.LOSS)
+            if (depth === 2) {
+                outcomes.imminentLoss = true
+            }
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.draw) {
-            outcomes.draws += this.getBaseOutcomePoints(depth, GameOutcome.DRAW)
+            outcomes.drawPoints += this.getBaseOutcomePoints(depth, GameOutcome.DRAW)
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         }
@@ -198,17 +211,19 @@ export class GameEngine {
             .sort((a, b) => b.points - a.points)[0]
     }
 
-    private getBaseOutcomePoints(recursionDepth: number, outcome:  GameOutcome): number {
-        // Give immediate win or avoiding loss in next turn highest priority
-        if ((recursionDepth === 1 && outcome === GameOutcome.WIN) || (recursionDepth === 2 && outcome === GameOutcome.LOSS)) {
-            return Number.MAX_SAFE_INTEGER
-        }
+    private getBaseOutcomePoints(recursionDepth: number, outcome: GameOutcome): number {
         return 1 / (recursionDepth ** 3);
     }
 
     private setSquareOutcomePoints(outcomes: ISquareOutcomes): void {
-        const totalOutcomes = outcomes.wins + outcomes.draws + outcomes.losses
-        outcomes.points = (outcomes.wins - outcomes.losses) / totalOutcomes
+        if (outcomes.imminentWin) {
+            outcomes.points = Infinity
+        } else if (outcomes.imminentLoss) {
+            outcomes.points = -Infinity
+        } else {
+            const totalOutcomes = outcomes.winPoints + outcomes.drawPoints + outcomes.lossPoints
+            outcomes.points = (outcomes.winPoints - outcomes.lossPoints) / totalOutcomes
+        }
     }
 
     private makeEasyAIMove(gameState: IGameState): IGameState {
