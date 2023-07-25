@@ -12,13 +12,15 @@ export enum AILevel {
 
 export interface ISquare {
     player?: Player,
-    inWinningRow?: boolean
+    inWinningRow?: boolean,
 }
 
 export interface ISquareOutcomes {
     winPoints: number,
+    /*semiWinPoints: number,*/
     drawPoints: number,
     lossPoints: number,
+    /*semiLossPoints: number,*/
     imminentWin: boolean,
     imminentLoss: boolean,
     points: number
@@ -56,8 +58,12 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
 }
 
 export class GameEngine {
-    private aiLevelToRecursionDepth = new Map<AILevel, number>([
-        [AILevel.HARD, 6]
+    private gridSizeToRecursionDepth = new Map<number, number>([
+        [3, 6],
+        [4, 4],
+        [5, 4],
+        [6, 4],
+        [7, 4],
     ])
     static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
 
@@ -209,6 +215,7 @@ export class GameEngine {
             }
         }
         squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
+        console.log(squaresData)
         board[squaresData[0].index].player = gameState.currentPlayer
     }
 
@@ -216,26 +223,26 @@ export class GameEngine {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
         if (gameState.winner === gameState.ai) {
-            outcomes.winPoints += this.getBaseOutcomePoints(depth, GameOutcome.WIN)
+            outcomes.winPoints += this.getBaseOutcomePoints(depth)
             if (depth === 1) {
                 outcomes.imminentWin = true
             }
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.winner) {
-            outcomes.lossPoints += this.getBaseOutcomePoints(depth, GameOutcome.LOSS)
+            outcomes.lossPoints += this.getBaseOutcomePoints(depth)
             if (depth === 2) {
                 outcomes.imminentLoss = true
             }
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         } else if (gameState.draw) {
-            outcomes.drawPoints += this.getBaseOutcomePoints(depth, GameOutcome.DRAW)
+            outcomes.drawPoints += this.getBaseOutcomePoints(depth)
             this.setSquareOutcomePoints(outcomes)
             return outcomes
         }
 
-        if (depth >= this.aiLevelToRecursionDepth.get(AILevel.HARD)!) {
+        if (depth >= this.gridSizeToRecursionDepth.get(gameState.gridSize)!) {
             return outcomes
         }
 
@@ -252,7 +259,7 @@ export class GameEngine {
             .sort((a, b) => b.points - a.points)[0]
     }
 
-    private getBaseOutcomePoints(recursionDepth: number, outcome: GameOutcome): number {
+    private getBaseOutcomePoints(recursionDepth: number): number {
         return 1 / (recursionDepth ** 3);
     }
 

@@ -78,7 +78,7 @@ test('board size 3: avoids trivial loss #2', () => {
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-/*test('board size 4: ai response time < 500 ms', () => {
+test('board size 4: ai response time < 500 ms', () => {
     for (let i = 4; i <= 4; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
         gameState.board[GameEngine.getMidSquare(i)].player = Player.CROSS
@@ -88,5 +88,5 @@ test('board size 3: avoids trivial loss #2', () => {
         const timeTaken = Date.now() - startTime
         expect(timeTaken).toBeLessThanOrEqual(500)
     }
-})*/
+})
 
