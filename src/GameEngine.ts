@@ -159,6 +159,15 @@ export class GameEngine {
             }
         })
         squaresData = squaresData.filter(data => !data.square.player)
+
+        // If empty board, always go with center square
+        if (squaresData.length === gameState.board.length) {
+            const index = Math.floor(gameState.gridSize / 2)
+            const midSquare = (gameState.gridSize + 1) * index
+            gameState.board[midSquare].player = gameState.currentPlayer
+            return
+        }
+
         for (let i = 0; i < squaresData.length; i++){
             const square = squaresData[i];
             square.outcomes = this.getSquarePoints(square.index, square.outcomes,

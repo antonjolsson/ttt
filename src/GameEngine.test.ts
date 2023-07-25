@@ -4,10 +4,11 @@ let gameState = getInitialGameState()
 let engine = new GameEngine()
 
 function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
-    gameState = getInitialGameState(gameState)
-    gameState.ai = ai
-    gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
     gameState.gridSize = gridSize
+    gameState.ai = ai
+    gameState = getInitialGameState(gameState)
+
+    gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
 test('board size 3: always start in center square', () => {
