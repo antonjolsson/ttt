@@ -41,11 +41,12 @@ export function initBoard(gridSize: number): ISquare[] {
 }
 
 export function getInitialGameState(oldGameState?: IGameState): IGameState {
-    const board = initBoard(oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0])
+    const gridSize = oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0]
+    const board = initBoard(gridSize)
     return {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
-        gridSize: oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0],
+        gridSize: gridSize,
         winningRowLength: oldGameState?.winningRowLength ?? 3,
         board: board,
         ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
@@ -59,6 +60,11 @@ export class GameEngine {
         [AILevel.HARD, 6]
     ])
     static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
+
+    static getMidSquare(gridSize: number): number {
+        const index = Math.floor(gridSize / 2)
+        return (gridSize + 1) * index;
+    }
 
     private checkForEndCondition(gameState: IGameState): IGameState {
         const board = gameState.board
@@ -144,7 +150,10 @@ export class GameEngine {
     }
 
     private makeHardAIMove(gameState: IGameState): void {
-        let squaresData = gameState.board.map((square, index) => {
+        const board = gameState.board
+        const gridSize = gameState.gridSize
+
+        let allSquaresData = board.map((square, index) => {
             return {
                 square: square,
                 index: index,
@@ -155,17 +164,40 @@ export class GameEngine {
                     points: 0,
                     imminentWin: false,
                     imminentLoss: false
-                }
+                },
+                hasAdjacentSymbol: false
             }
         })
-        squaresData = squaresData.filter(data => !data.square.player)
+        let squaresData = allSquaresData.filter(data => !data.square.player)
 
         // If empty board, always go with center square
-        if (squaresData.length === gameState.board.length) {
-            const index = Math.floor(gameState.gridSize / 2)
-            const midSquare = (gameState.gridSize + 1) * index
-            gameState.board[midSquare].player = gameState.currentPlayer
+        if (squaresData.length === board.length) {
+            const midSquare = GameEngine.getMidSquare(gridSize);
+            board[midSquare].player = gameState.currentPlayer
             return
+        }
+
+        // If gridSize > 3, only use squares adjacent to occupied ones as candidates
+        if (gameState.gridSize > 3) {
+            const occupiedSquaresData = allSquaresData.filter(data => data.square.player)
+            const adjacentSquaresData = squaresData.filter(freeSquareData => {
+                const iF = freeSquareData.index
+                // Check if this free square is adjacent to some occupied square
+                return occupiedSquaresData.some(data => {
+                    const iO = data.index
+                    return (
+                        // Row above
+                        (iO >= iF - gridSize - 1 && iO <= iF - gridSize + 1)
+                        // Same  row
+                        || iO === iF - 1 || iO === iF + 1
+                        // Row below
+                        || (iO >= iF + gridSize - 1 && iO <= iF + gridSize + 1))
+                })
+            })
+            squaresData = adjacentSquaresData.map(data => {
+                data.hasAdjacentSymbol = true
+                return data
+            })
         }
 
         for (let i = 0; i < squaresData.length; i++){
@@ -177,7 +209,7 @@ export class GameEngine {
             }
         }
         squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
-        gameState.board[squaresData[0].index].player = gameState.currentPlayer
+        board[squaresData[0].index].player = gameState.currentPlayer
     }
 
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {

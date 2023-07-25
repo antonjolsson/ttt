@@ -11,11 +11,15 @@ function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
-test('board size 3: always start in center square', () => {
-    initTest(Player.CROSS, Player.CROSS);
+test('board size 3-7: always start in center square', () => {
+    for (let i = 3; i <= 7; i++) {
+        initTest(Player.CROSS, Player.CROSS, i);
 
-    engine.update(gameState)
-    expect(gameState.board[4].player).toBe(Player.CROSS)
+        engine.update(gameState)
+
+        const midSquare = GameEngine.getMidSquare(i)
+        expect(gameState.board[midSquare].player).toBe(Player.CROSS)
+    }
 })
 
 test('board size 3: weighs outcomes by recursion depth', () => {
@@ -75,12 +79,14 @@ test('board size 3: avoids trivial loss #2', () => {
 })
 
 /*test('board size 4: ai response time < 500 ms', () => {
-    initTest(Player.CROSS, Player.CROSS, 4);
+    for (let i = 4; i <= 4; i++) {
+        initTest(Player.CIRCLE, Player.CIRCLE, i);
+        gameState.board[GameEngine.getMidSquare(i)].player = Player.CROSS
 
-    const startTime = Date.now()
-    engine.update(gameState)
-    const timeTaken = Date.now() - startTime
-
-    expect(timeTaken).toBeLessThanOrEqual(500)
+        const startTime = Date.now()
+        engine.update(gameState)
+        const timeTaken = Date.now() - startTime
+        expect(timeTaken).toBeLessThanOrEqual(500)
+    }
 })*/
 
