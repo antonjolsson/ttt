@@ -90,3 +90,17 @@ test('board size 4: ai response time < 500 ms', () => {
     }
 })
 
+/*test('board size 4-7: makes human-like try to avoid inevitable loss', () => {
+    for (let i = 4; i <= 4; i++) {
+        initTest(Player.CIRCLE, Player.CIRCLE, i);
+        const midSquare = GameEngine.getMidSquare(i)
+        gameState.board[midSquare].player = Player.CROSS
+        gameState.board[midSquare - 1].player = Player.CROSS
+        gameState.board[midSquare - gameState.gridSize - 1].player = Player.CIRCLE
+
+        engine.update(gameState)
+
+        expect(gameState.board[midSquare - 2].player).toBe(Player.CIRCLE)
+    }
+})*/
+

@@ -51,7 +51,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
         gridSize: gridSize,
         winningRowLength: oldGameState?.winningRowLength ?? 3,
         board: board,
-        ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
+        ai: oldGameState ? oldGameState.ai : undefined,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
     };
@@ -79,7 +79,7 @@ export class GameEngine {
         const winningLength = gameState.winningRowLength
 
         function getWinSequence(row: ISquare[]): ISquare[] | null {
-            for (let i = 0; i <= gridSize - winningLength; i++) {
+            for (let i = 0; i <= row.length - winningLength; i++) {
                 const sequence = row.slice(i, i + winningLength)
                 if (sequence.every(square => square.player === currentPlayer)) {
                     return sequence
@@ -106,18 +106,32 @@ export class GameEngine {
             }
         }
 
-        // Check diagonally nw - sw
-        let row = board.filter((_, j) => j % (gridSize + 1) === 0)
-        let winSequence = getWinSequence(row);
-        if (winSequence) {
-            return this.onWinningRow(currentPlayer, winSequence, gameState)
-        }
+        let seq: ISquare[] = []
+        let winSequence: ISquare[] | null = null
 
-        // Check diagonally sw - ne
-        row = board.filter((_, j) => j !== 0 && j < gridSize * gridSize - 1 && j % (gridSize - 1) === 0)
-        winSequence = getWinSequence(row);
-        if (winSequence) {
-            return this.onWinningRow(currentPlayer, winSequence, gameState)
+        for (let row = 0; row <= gridSize - winningLength; row++) {
+            for (let col = 0; col <= gridSize - winningLength; col++) {
+                // Check diagonally nw - se
+                let startIndex = row * gridSize + col
+                let offset = startIndex % (gridSize + 1)
+                seq = board.filter((_, j) => j >= startIndex && j % (gridSize + 1) === offset)
+                winSequence = getWinSequence(seq);
+                if (winSequence) {
+                    return this.onWinningRow(currentPlayer, winSequence, gameState)
+                }
+
+                // Check diagonally ne - sw
+                const mirroredCol = gridSize - 1 - col
+                startIndex = row * gridSize + mirroredCol
+                offset = startIndex % (gridSize - 1)
+                seq = board.filter((_, j) => j >= startIndex
+                    && (j === startIndex || j % gridSize < mirroredCol)
+                    && j % (gridSize - 1) === offset)
+                winSequence = getWinSequence(seq);
+                if (winSequence) {
+                    return this.onWinningRow(currentPlayer, winSequence, gameState)
+                }
+            }
         }
 
         // No winner, check for draw
@@ -215,7 +229,7 @@ export class GameEngine {
             }
         }
         squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
-        console.log(squaresData)
+        // console.log(squaresData)
         board[squaresData[0].index].player = gameState.currentPlayer
     }
 
