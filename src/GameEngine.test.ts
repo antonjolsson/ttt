@@ -11,6 +11,33 @@ function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
+test('board size 3: recognizes win condition', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
+
+    gameState.board = [
+        {player: Player.CROSS}, {}, {player: Player.CIRCLE},
+        {}, {player: Player.CROSS}, {player: Player.CIRCLE},
+        {}, {}, {player: Player.CROSS}]
+
+    engine.update(gameState)
+
+    expect(gameState.winner).toBe(Player.CROSS)
+})
+
+test('board size 3: recognizes win next turn', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
+
+    gameState.board = [
+        {player: Player.CIRCLE}, {}, {},
+        {}, {player: Player.CROSS}, {player: Player.CIRCLE},
+        {}, {player: Player.CROSS}, {player: Player.CROSS}]
+
+    engine.update(gameState)
+
+    expect(gameState.winningNextTurnRows.x).toStrictEqual(['6-7-8', '1-4-7'])
+    expect(gameState.winningNextTurnRows.o).toStrictEqual(['0-1-2'])
+})
+
 test('board size 3-7: always start in center square', () => {
     for (let i = 3; i <= 7; i++) {
         initTest(Player.CROSS, Player.CROSS, i);
@@ -42,13 +69,13 @@ test('board size 3: always wins when starting and opponent doesn\'t choose corne
         {}, {player: Player.CIRCLE}, {}]
 
     engine.update(gameState)
-    expect(gameState.board[6].player).toBe(Player.CROSS)
-
-    gameState.board[2].player = Player.CIRCLE
-    engine.update(gameState)
     expect(gameState.board[0].player).toBe(Player.CROSS)
 
     gameState.board[8].player = Player.CIRCLE
+    engine.update(gameState)
+    expect(gameState.board[6].player).toBe(Player.CROSS)
+
+    gameState.board[2].player = Player.CIRCLE
     engine.update(gameState)
     expect(gameState.winner).toBe(Player.CROSS)
 })

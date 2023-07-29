@@ -1,4 +1,18 @@
-import {IGameState} from "./App";
+export interface IGameState {
+    currentPlayer: Player,
+    board: ISquare[],
+    winningRow: ISquare[],
+    winningNextTurnRows: {
+        o: string[],
+        x: string[]
+    },
+    winningRowLength: number,
+    gridSize: number,
+    ai?: Player,
+    winner?: Player,
+    aiLevel: AILevel,
+    draw: boolean
+}
 
 export enum Player {
     CROSS = 'x',
@@ -13,14 +27,13 @@ export enum AILevel {
 export interface ISquare {
     player?: Player,
     inWinningRow?: boolean,
+    inWinningNextTurnRow?: boolean
 }
 
 export interface ISquareOutcomes {
     winPoints: number,
-    /*semiWinPoints: number,*/
     drawPoints: number,
     lossPoints: number,
-    /*semiLossPoints: number,*/
     imminentWin: boolean,
     imminentLoss: boolean,
     points: number
@@ -48,6 +61,10 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
     return {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
+        winningNextTurnRows: {
+            x: [] as string[],
+            o: [] as string[]
+        },
         gridSize: gridSize,
         winningRowLength: oldGameState?.winningRowLength ?? 3,
         board: board,
@@ -72,85 +89,136 @@ export class GameEngine {
         return (gridSize + 1) * index;
     }
 
-    private checkForEndCondition(gameState: IGameState): IGameState {
-        const board = gameState.board
+    private evaluateGameState(gameState: IGameState/*, checkNextTurnWins?: boolean*/): void {
         const gridSize = gameState.gridSize
         const currentPlayer = gameState.currentPlayer
-        const winningLength = gameState.winningRowLength
+        gameState.winningNextTurnRows[gameState.currentPlayer] = []
 
-        function getWinSequence(row: ISquare[]): ISquare[] | null {
+        const board = gameState.board
+        board.forEach(sq => sq.inWinningNextTurnRow = sq.player === currentPlayer ? undefined : sq.inWinningNextTurnRow)
+
+        function getWinSequence(row: number[], winningLength: number, allowedEmptySquares: number): number[] | null {
             for (let i = 0; i <= row.length - winningLength; i++) {
-                const sequence = row.slice(i, i + winningLength)
-                if (sequence.every(square => square.player === currentPlayer)) {
-                    return sequence
+                let emptySquares = 0
+                let j = i
+                for (; j < i + winningLength; j++) {
+                    const square = board[row[j]]
+                    if (square.player === undefined) {
+                        emptySquares++
+                    } else if (square.player !== currentPlayer) {
+                        break
+                    }
+                    if (emptySquares > allowedEmptySquares) {
+                        break
+                    }
+                }
+                if (j === i + winningLength) {
+                    return row.slice(i, i + winningLength)
                 }
             }
             return null
         }
 
-        // Check for winner horizontally
-        for (let i = 0; i < gridSize * gridSize; i += gridSize) {
-            const row = board.slice(i, i + gridSize)
-            const winSequence = getWinSequence(row);
-            if (winSequence) {
-                return this.onWinningRow(currentPlayer, winSequence, gameState)
-            }
-        }
+        for (const checkNextTurnWins of [false, true]) {
+            const winningLength = gameState.winningRowLength/* - (checkNextTurnWins ? 1 : 0)*/
+            const allowedEmptySquares = checkNextTurnWins ? 1 : 0
 
-        // Check vertically
-        for (let column = 0; column < gridSize; column++) {
-            const row = board.filter((_, i) => i % gridSize === column)
-            const winSequence = getWinSequence(row);
-            if (winSequence) {
-                return this.onWinningRow(currentPlayer, winSequence, gameState)
-            }
-        }
+            const indices = Array.from(Array(gridSize * gridSize).keys())
 
-        let seq: ISquare[] = []
-        let winSequence: ISquare[] | null = null
-
-        for (let row = 0; row <= gridSize - winningLength; row++) {
-            for (let col = 0; col <= gridSize - winningLength; col++) {
-                // Check diagonally nw - se
-                let startIndex = row * gridSize + col
-                let offset = startIndex % (gridSize + 1)
-                seq = board.filter((_, j) => j >= startIndex && j % (gridSize + 1) === offset)
-                winSequence = getWinSequence(seq);
+            // Check for winner horizontally
+            for (let i = 0; i < gridSize * gridSize; i += gridSize) {
+                // const row = board.slice(i, i + gridSize)
+                const row = indices.slice(i, i + gridSize)
+                const winSequence = getWinSequence(row, winningLength, allowedEmptySquares);
                 if (winSequence) {
-                    return this.onWinningRow(currentPlayer, winSequence, gameState)
-                }
-
-                // Check diagonally ne - sw
-                const mirroredCol = gridSize - 1 - col
-                startIndex = row * gridSize + mirroredCol
-                offset = startIndex % (gridSize - 1)
-                seq = board.filter((_, j) => j >= startIndex
-                    && (j === startIndex || j % gridSize < mirroredCol)
-                    && j % (gridSize - 1) === offset)
-                winSequence = getWinSequence(seq);
-                if (winSequence) {
-                    return this.onWinningRow(currentPlayer, winSequence, gameState)
+                    this.onWinningRow(currentPlayer, winSequence, gameState, checkNextTurnWins)
+                    if (!checkNextTurnWins) {
+                        return
+                    }
                 }
             }
-        }
 
-        // No winner, check for draw
-        const draw = board.every(square => square.player)
-        if (draw) {
-            gameState.draw = true
-        }
+            // Check vertically
+            for (let column = 0; column < gridSize; column++) {
+                // const row = board.filter((_, i) => i % gridSize === column)
+                const row = indices.filter((_, i) => i % gridSize === column)
+                const winSequence = getWinSequence(row, winningLength, allowedEmptySquares);
+                if (winSequence) {
+                    this.onWinningRow(currentPlayer, winSequence, gameState, checkNextTurnWins)
+                    if (!checkNextTurnWins) {
+                        return
+                    }
+                }
+            }
 
-        return gameState
+            let seq: number[] = []
+            let winSequence: number[] | null = null
+
+            for (let row = 0; row <= gridSize - winningLength; row++) {
+                for (let col = 0; col <= gridSize - winningLength; col++) {
+                    // Check diagonally nw - se
+                    let startIndex = row * gridSize + col
+                    let offset = startIndex % (gridSize + 1)
+                    // seq = board.filter((_, j) => j >= startIndex && j % (gridSize + 1) === offset)
+                    seq = indices.filter((_, j) => j >= startIndex && j % (gridSize + 1) === offset)
+                    winSequence = getWinSequence(seq, winningLength, allowedEmptySquares);
+                    if (winSequence) {
+                        this.onWinningRow(currentPlayer, winSequence, gameState, checkNextTurnWins)
+                        if (!checkNextTurnWins) {
+                            return
+                        }
+                    }
+
+                    // Check diagonally ne - sw
+                    const mirroredCol = gridSize - 1 - col
+                    startIndex = row * gridSize + mirroredCol
+                    offset = startIndex % (gridSize - 1)
+                    seq = indices.filter((_, j) => j >= startIndex
+                        && (j === startIndex || j % gridSize < mirroredCol)
+                        && j % (gridSize - 1) === offset)
+                    winSequence = getWinSequence(seq, winningLength, allowedEmptySquares);
+                    if (winSequence) {
+                        this.onWinningRow(currentPlayer, winSequence, gameState, checkNextTurnWins)
+                        if (!checkNextTurnWins) {
+                            return
+                        }
+                    }
+                }
+            }
+
+            if (!checkNextTurnWins) {
+                // No winner, check for draw
+                const draw = board.every(square => square.player)
+                if (draw) {
+                    gameState.draw = true
+                }
+            }
+
+        }
     }
 
-    private onWinningRow(currentPlayer: Player, row: ISquare[], gameState: IGameState): IGameState {
+    private onWinningRow(currentPlayer: Player, indexSequence: number[], gameState: IGameState, nextTurnWin: boolean): void {
+        if (nextTurnWin) {
+            const rowAsString = indexSequence.join('-')
+            const rows = currentPlayer === Player.CROSS
+                ? gameState.winningNextTurnRows.x
+                : gameState.winningNextTurnRows.o
+            if (!rows.includes(rowAsString)) {
+                rows.push(rowAsString)
+                gameState.board.filter((_, i) => indexSequence.includes(i)).forEach(sq => sq.inWinningNextTurnRow = true)
+            }
+            return
+        }
+        // gameState.winner = currentPlayer
+        const squareSeq = gameState.board.filter((_, i) => indexSequence.includes(i))
+        squareSeq.forEach(sq => sq.inWinningRow = true)
+        gameState.winningRow = squareSeq
         gameState.winner = currentPlayer
-        row.forEach(square => square.inWinningRow = true)
-        return {...gameState, winner: currentPlayer, winningRow: row}
     }
 
     update(gameState: IGameState): void {
-        this.checkForEndCondition(gameState)
+        this.evaluateGameState(gameState)
+        // this.checkForEndCondition(gameState, true)
         if (!gameState.winner && !gameState.draw) {
             gameState.currentPlayer = this.getNextPlayer(gameState.currentPlayer)
 
@@ -229,32 +297,44 @@ export class GameEngine {
             }
         }
         squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
-        // console.log(squaresData)
+        console.log(squaresData)
+        console.log(gameState)
         board[squaresData[0].index].player = gameState.currentPlayer
     }
 
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {
         gameState.board[index].player = gameState.currentPlayer
-        gameState = this.checkForEndCondition(gameState)
-        if (gameState.winner === gameState.ai) {
-            outcomes.winPoints += this.getBaseOutcomePoints(depth)
-            if (depth === 1) {
-                outcomes.imminentWin = true
+        /*for (const checkNextTurnWins of [false, true]) {*/
+            this.evaluateGameState(gameState/*, checkNextTurnWins*/)
+            if (gameState.winner === gameState.ai) {
+                outcomes.winPoints += 1 / (depth ** 2)
+                if (depth === 1) {
+                    outcomes.imminentWin = true
+                    this.setSquareOutcomePoints(outcomes)
+                    return outcomes
+                }
+                this.setSquareOutcomePoints(outcomes)
+            } else if (gameState.winner) {
+                outcomes.lossPoints += 1 / (depth ** 2)
+                if (depth === 2) {
+                    outcomes.imminentLoss = true
+                    this.setSquareOutcomePoints(outcomes)
+                    return outcomes
+                }
+                this.setSquareOutcomePoints(outcomes)
+                //
+            } else if (gameState.draw) {
+                outcomes.drawPoints += 1 / (depth ** 2)
+                this.setSquareOutcomePoints(outcomes)
+                return outcomes
             }
-            this.setSquareOutcomePoints(outcomes)
-            return outcomes
-        } else if (gameState.winner) {
-            outcomes.lossPoints += this.getBaseOutcomePoints(depth)
-            if (depth === 2) {
-                outcomes.imminentLoss = true
-            }
-            this.setSquareOutcomePoints(outcomes)
-            return outcomes
-        } else if (gameState.draw) {
-            outcomes.drawPoints += this.getBaseOutcomePoints(depth)
-            this.setSquareOutcomePoints(outcomes)
-            return outcomes
-        }
+        /*}*/
+        gameState.winningNextTurnRows[gameState.currentPlayer].forEach(_ => {
+            outcomes.winPoints += (gameState.winningRowLength - 1) / gameState.winningRowLength / (depth ** 3)
+        })
+        gameState.winningNextTurnRows[this.getNextPlayer(gameState.currentPlayer)].forEach(_ => {
+            outcomes.lossPoints += (gameState.winningRowLength - 1) / gameState.winningRowLength / (depth ** 3)
+        })
 
         if (depth >= this.gridSizeToRecursionDepth.get(gameState.gridSize)!) {
             return outcomes
@@ -273,19 +353,14 @@ export class GameEngine {
             .sort((a, b) => b.points - a.points)[0]
     }
 
-    private getBaseOutcomePoints(recursionDepth: number): number {
-        return 1 / (recursionDepth ** 3);
-    }
-
     private setSquareOutcomePoints(outcomes: ISquareOutcomes): void {
         if (outcomes.imminentWin) {
-            outcomes.points = Infinity
+            outcomes.points = 1000
         } else if (outcomes.imminentLoss) {
-            outcomes.points = -Infinity
-        } else {
-            const totalOutcomes = outcomes.winPoints + outcomes.drawPoints + outcomes.lossPoints
-            outcomes.points = (outcomes.winPoints - outcomes.lossPoints) / totalOutcomes
+            outcomes.points = -1000
         }
+        const totalOutcomes = outcomes.winPoints + outcomes.drawPoints + outcomes.lossPoints
+        outcomes.points += (outcomes.winPoints - outcomes.lossPoints) / totalOutcomes
     }
 
     private makeEasyAIMove(gameState: IGameState): IGameState {

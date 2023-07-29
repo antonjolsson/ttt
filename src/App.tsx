@@ -3,22 +3,10 @@ import {Header} from "./components/Header";
 import {Board} from "./components/Board";
 import './App.css'
 import {MessageArea} from "./components/MessageArea";
-import {AILevel, GameEngine, getInitialGameState, ISquare, Player} from "./GameEngine";
+import {AILevel, GameEngine, getInitialGameState, IGameState, ISquare, Player} from "./GameEngine";
 import {RestartButton} from "./components/RestartButton";
 import {Footer} from "./components/Footer";
 import {SideBar} from "./components/SideBar";
-
-export interface IGameState {
-    currentPlayer: Player,
-    board: ISquare[],
-    winningRow: ISquare[],
-    winningRowLength: number
-    gridSize: number,
-    ai?: Player,
-    winner?: Player,
-    aiLevel: AILevel,
-    draw: boolean
-}
 
 export const GameStateContext = createContext({
     gameState: getInitialGameState(),
