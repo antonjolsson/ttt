@@ -11,6 +11,19 @@ function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
+test('board size 3: recognizes win condition', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
+
+    gameState.board = [
+        {player: Player.CROSS}, {}, {player: Player.CIRCLE},
+        {}, {player: Player.CROSS}, {player: Player.CIRCLE},
+        {}, {}, {player: Player.CROSS}]
+
+    engine.update(gameState)
+
+    expect(gameState.winner).toBe(Player.CROSS)
+})
+
 test('board size 3-7: always start in center square', () => {
     for (let i = 3; i <= 7; i++) {
         initTest(Player.CROSS, Player.CROSS, i);
