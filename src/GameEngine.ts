@@ -51,7 +51,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
         gridSize: gridSize,
         winningRowLength: oldGameState?.winningRowLength ?? 3,
         board: board,
-        ai: oldGameState ? oldGameState.ai : undefined,
+        ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
         draw: false
     };

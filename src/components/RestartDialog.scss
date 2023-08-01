@@ -1,0 +1,92 @@
+@use '../App';
+@use 'MessageArea';
+
+#restart-dialog {
+    width: max-content;
+    z-index: 10;
+    grid-template-areas:
+            "a a"
+            "b c";
+    grid-template-rows: auto auto;
+    box-shadow: 0.5rem 0.5rem App.$dark-color;
+    border-radius: App.$border-radius;
+    border: none;
+    height: 11rem;
+    padding: 2rem;
+    column-gap: 1.5rem;
+    display: grid;
+
+    @keyframes zoom-in {
+        from {
+            scale: 0;
+        }
+        to {
+            scale: 1;
+        }
+    }
+
+    @keyframes zoom-out {
+        from {
+            scale: 1;
+        }
+        to {
+            scale: 0;
+        }
+    }
+
+    &.visible {
+        animation: App.$transition-duration-short zoom-in forwards;
+    }
+
+    &.hidden {
+        animation: App.$transition-duration-short zoom-out forwards;
+    }
+
+    &.initial {
+        scale: 0;
+    }
+
+    &::backdrop {
+        background: hsl(0deg 0 0 / 0.5);
+    }
+
+    p {
+        grid-area: a;
+        text-align: center;
+        font-size: App.$h2-font-size;
+        font-family: Poppins, sans-serif;
+        color: App.$dark-color;
+        font-weight: 900;
+
+        @media (width <= (App.$screen-break-point-small)) {
+            font-size: App.$h2-font-size * App.$large-small-font-size-ratio;
+            margin: 0 1.5rem 1.5rem;
+        }
+    }
+
+    button {
+        width: 8rem;
+        outline: none;
+
+        &.confirm {
+            grid-area: b;
+        }
+
+        &.cancel {
+            grid-area: c;
+            background: App.$gray;
+        }
+
+        @media (width <= (App.$screen-break-point-small)) {
+            width: 100%;
+        }
+    }
+
+    @media (width <= (App.$screen-break-point-small)) {
+        height: 16rem;
+        width: 80%;
+        padding: 2.5rem 2rem;
+        grid-template-rows: min-content min-content;
+        grid-template-columns: 1fr 1fr;
+    }
+}

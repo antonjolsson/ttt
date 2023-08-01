@@ -8,10 +8,10 @@ export function RadioButtonControl(props: { options: string[], label: string, se
     }
 
     return <div className={'radio-button-control'}>
-        <p className={`control-label ${!!props.disabled ? 'disabled' : ''}`}>{props.label}</p>
+        <p className={`control-label`}>{props.label}</p>
         <div className={'options'}>
             {props.options.map(option => <span key={option} onClick={(): void => props.onSelect(option)}
-               className={`option ${getOptionClassName(option)} ${!!props.disabled ? 'disabled' : ''}`}>{option}</span>)}
+               className={`option ${getOptionClassName(option)}`}>{option}</span>)}
         </div>
     </div>;
 }
