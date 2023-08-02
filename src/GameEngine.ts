@@ -229,7 +229,7 @@ export class GameEngine {
             }
         }
         squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
-        // console.log(squaresData)
+        console.log(squaresData)
         board[squaresData[0].index].player = gameState.currentPlayer
     }
 
@@ -279,9 +279,9 @@ export class GameEngine {
 
     private setSquareOutcomePoints(outcomes: ISquareOutcomes): void {
         if (outcomes.imminentWin) {
-            outcomes.points = Infinity
+            outcomes.points += 1000
         } else if (outcomes.imminentLoss) {
-            outcomes.points = -Infinity
+            outcomes.points -= 1000
         } else {
             const totalOutcomes = outcomes.winPoints + outcomes.drawPoints + outcomes.lossPoints
             outcomes.points = (outcomes.winPoints - outcomes.lossPoints) / totalOutcomes

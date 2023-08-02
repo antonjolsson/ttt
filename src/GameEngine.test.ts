@@ -103,6 +103,21 @@ test('board size 4: ai response time < 500 ms', () => {
     }
 })
 
+test('bs 4, wl 3: ai always wins when starting', () => {
+    initTest(Player.CROSS, Player.CROSS, 4)
+
+    engine.update(gameState)
+    expect(gameState.board[10].player).toBe(Player.CROSS)
+
+    gameState.board[5].player = Player.CIRCLE
+    engine.update(gameState)
+    expect(gameState.board[6].player).toBe(Player.CROSS)
+
+    gameState.board[2].player = Player.CIRCLE
+    engine.update(gameState)
+    expect(gameState.winner).toBe(Player.CROSS)
+})
+
 /*test('board size 4-7: makes human-like try to avoid inevitable loss', () => {
     for (let i = 4; i <= 4; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
