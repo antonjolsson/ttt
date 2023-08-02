@@ -198,20 +198,21 @@ export class GameEngine {
         }
 
         // If gridSize > 3, only use squares adjacent to occupied ones as candidates
-        if (gameState.gridSize > 3) {
+        if (gridSize > 3) {
             const occupiedSquaresData = allSquaresData.filter(data => data.square.player)
             const adjacentSquaresData = squaresData.filter(freeSquareData => {
                 const iF = freeSquareData.index
+                const fRow = Math.floor(iF / gridSize)
+                const fCol = iF % gridSize
+
                 // Check if this free square is adjacent to some occupied square
                 return occupiedSquaresData.some(data => {
                     const iO = data.index
-                    return (
-                        // Row above
-                        (iO >= iF - gridSize - 1 && iO <= iF - gridSize + 1)
-                        // Same  row
-                        || iO === iF - 1 || iO === iF + 1
-                        // Row below
-                        || (iO >= iF + gridSize - 1 && iO <= iF + gridSize + 1))
+                    const oRow = Math.floor(iO / gridSize)
+                    const oCol = iO % gridSize
+
+                    return (Math.abs(oRow - fRow) <= 1
+                        && Math.abs(oCol - fCol) <= 1)
                 })
             })
             squaresData = adjacentSquaresData.map(data => {
