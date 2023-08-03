@@ -11,7 +11,7 @@ function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
-test('board size 3: recognizes win condition', () => {
+test('board size 3, winning length 3: recognizes win condition', () => {
     initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [
@@ -24,7 +24,7 @@ test('board size 3: recognizes win condition', () => {
     expect(gameState.winner).toBe(Player.CROSS)
 })
 
-test('board size 3-7: always start in center square when cross', () => {
+test('bs 3-7: always start in center square when cross', () => {
     for (let i = 3; i <= 7; i++) {
         initTest(Player.CROSS, Player.CROSS, i);
 
@@ -35,7 +35,7 @@ test('board size 3-7: always start in center square when cross', () => {
     }
 })
 
-test('board size 4: always start in center squares when circle and cross in center squares', () => {
+test('bs 4: always start in center squares when circle and cross in center squares', () => {
     for (let i = 4; i <= 4; i += 2) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
 
@@ -49,7 +49,7 @@ test('board size 4: always start in center squares when circle and cross in cent
     }
 })
 
-test('board size 3: weighs outcomes by recursion depth', () => {
+test('bs 3: weighs outcomes by recursion depth', () => {
     initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [{}, {}, {player: Player.CIRCLE}, {}, {player: Player.CROSS}, {player: Player.CROSS},
@@ -60,7 +60,7 @@ test('board size 3: weighs outcomes by recursion depth', () => {
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-test('board size 3: always wins when starting and opponent doesn\'t choose corner', () => {
+test('bs 3: always wins when starting and opponent doesn\'t choose corner', () => {
     initTest(Player.CROSS, Player.CROSS);
 
     gameState.board = [
@@ -80,7 +80,7 @@ test('board size 3: always wins when starting and opponent doesn\'t choose corne
     expect(gameState.winner).toBe(Player.CROSS)
 })
 
-test('board size 3: avoids trivial loss #1', () => {
+test('bs 3, wl 3: avoids trivial loss #1', () => {
     initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [
@@ -93,7 +93,7 @@ test('board size 3: avoids trivial loss #1', () => {
     expect(gameState.board[1].player).toBe(Player.CIRCLE)
 })
 
-test('board size 3: avoids trivial loss #2', () => {
+test('bs 3, wl 3: avoids trivial loss #2', () => {
     initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [
@@ -105,7 +105,7 @@ test('board size 3: avoids trivial loss #2', () => {
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-test('board size 4: ai response time < 500 ms', () => {
+test('bs 4, wl 3: ai response time < 500 ms', () => {
     for (let i = 4; i <= 4; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
         gameState.board[GameEngine.getMidSquare(i)].player = Player.CROSS
@@ -132,17 +132,39 @@ test('bs 4, wl 3: ai always wins when starting', () => {
     expect(gameState.winner).toBe(Player.CROSS)
 })
 
-/*test('board size 4-7: makes human-like try to avoid inevitable loss', () => {
-    for (let i = 4; i <= 4; i++) {
-        initTest(Player.CIRCLE, Player.CIRCLE, i);
-        const midSquare = GameEngine.getMidSquare(i)
-        gameState.board[midSquare].player = Player.CROSS
-        gameState.board[midSquare - 1].player = Player.CROSS
-        gameState.board[midSquare - gameState.gridSize - 1].player = Player.CIRCLE
+test('bs 4, wl 3: makes human-like try to avoid inevitable loss', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE, 4);
+    const midSquare = GameEngine.getMidSquare(4)
+    gameState.board[midSquare].player = Player.CROSS
+    gameState.board[midSquare - 1].player = Player.CROSS
+    gameState.board[midSquare - gameState.gridSize - 1].player = Player.CIRCLE
 
-        engine.update(gameState)
+    engine.update(gameState)
 
-        expect(gameState.board[midSquare - 2].player).toBe(Player.CIRCLE)
-    }
-})*/
+    expect(gameState.board[midSquare - 2].player).toBe(Player.CIRCLE)
+})
+
+test('bs 4, wl 3: plays optimally when human does and human starts in corner', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE, 4);
+
+    gameState.board[0].player = Player.CROSS
+    engine.update(gameState)
+    expect(gameState.board[5].player).toBe(Player.CIRCLE)
+
+    gameState.board[4].player = Player.CROSS
+    engine.update(gameState)
+    expect(gameState.board[8].player).toBe(Player.CIRCLE)
+
+    gameState.board[2].player = Player.CROSS
+    engine.update(gameState)
+    expect(gameState.board[1].player).toBe(Player.CIRCLE)
+
+    gameState.board[9].player = Player.CROSS
+    engine.update(gameState)
+    expect(gameState.board[14].player).toBe(Player.CIRCLE)
+
+    gameState.board[6].player = Player.CROSS
+    engine.update(gameState)
+    expect(gameState.board[3].player).toBe(Player.CIRCLE)
+})
 
