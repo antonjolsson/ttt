@@ -60,8 +60,8 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
 export class GameEngine {
     private gridSizeToRecursionDepth = new Map<number, number>([
         [3, 6],
-        [4, 4],
-        [5, 4],
+        [4, 3],
+        [5, 3],
         [6, 4],
         [7, 4],
     ])

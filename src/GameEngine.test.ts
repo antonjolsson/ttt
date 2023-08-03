@@ -106,7 +106,7 @@ test('bs 3, wl 3: avoids trivial loss #2', () => {
 })
 
 test('bs 4, wl 3: ai response time < 500 ms', () => {
-    for (let i = 4; i <= 4; i++) {
+    for (let i = 4; i <= 5; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
         gameState.board[GameEngine.getMidSquare(i)].player = Player.CROSS
 
@@ -141,7 +141,7 @@ test('bs 4, wl 3: makes human-like try to avoid inevitable loss', () => {
 
     engine.update(gameState)
 
-    expect(gameState.board[midSquare - 2].player).toBe(Player.CIRCLE)
+    expect(gameState.board[midSquare - 2].player || gameState.board[midSquare + 1].player).toBe(Player.CIRCLE)
 })
 
 test('bs 4, wl 3: plays optimally when human does and human starts in corner', () => {
