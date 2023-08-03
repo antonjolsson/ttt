@@ -43,7 +43,7 @@ export function initBoard(gridSize: number): ISquare[] {
 }
 
 export function getInitialGameState(oldGameState?: IGameState): IGameState {
-    const gridSize = oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0]
+    const gridSize = oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[1]
     const board = initBoard(gridSize)
     return {
         currentPlayer: Player.CROSS,
@@ -202,14 +202,12 @@ export class GameEngine {
             const occupiedSquaresData = allSquaresData.filter(data => data.square.player)
             const adjacentSquaresData = squaresData.filter(freeSquareData => {
                 const iF = freeSquareData.index
-                const fRow = Math.floor(iF / gridSize)
-                const fCol = iF % gridSize
+                const {row: fRow, col: fCol} = this.getRowAndColumnFromIndex(iF, gridSize);
 
                 // Check if this free square is adjacent to some occupied square
                 return occupiedSquaresData.some(data => {
                     const iO = data.index
-                    const oRow = Math.floor(iO / gridSize)
-                    const oCol = iO % gridSize
+                    const {row: oRow, col: oCol} = this.getRowAndColumnFromIndex(iO, gridSize);
 
                     return (Math.abs(oRow - fRow) <= 1
                         && Math.abs(oCol - fCol) <= 1)
@@ -229,9 +227,27 @@ export class GameEngine {
                 break
             }
         }
-        squaresData.sort((a, b) => b.outcomes.points - a.outcomes.points)
+
+        squaresData.sort((a, b) => {
+            let sorting = b.outcomes.points - a.outcomes.points
+            // Possibly break sorting tie by determining square closest to centre
+            if (sorting === 0) {
+                const midSquare = GameEngine.getMidSquare(gridSize);
+                const {row: midSquareRow, col: midSquareCol} = this.getRowAndColumnFromIndex(midSquare, gridSize)
+                const {row: aRow, col: aCol} = this.getRowAndColumnFromIndex(a.index, gridSize)
+                const {row: bRow, col: bCol} = this.getRowAndColumnFromIndex(b.index, gridSize)
+                const aDist = Math.abs(aRow - midSquareRow) + Math.abs(aCol - midSquareCol)
+                const bDist = Math.abs(bRow - midSquareRow) + Math.abs(bCol - midSquareCol)
+                sorting = aDist - bDist
+            }
+            return sorting
+        })
         console.log(squaresData)
         board[squaresData[0].index].player = gameState.currentPlayer
+    }
+
+    private getRowAndColumnFromIndex(index: number, gridSize: number): {row: number, col: number} {
+        return {row: Math.floor(index / gridSize), col: index % gridSize};
     }
 
     private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {

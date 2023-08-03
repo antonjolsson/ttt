@@ -24,7 +24,7 @@ test('board size 3: recognizes win condition', () => {
     expect(gameState.winner).toBe(Player.CROSS)
 })
 
-test('board size 3-7: always start in center square', () => {
+test('board size 3-7: always start in center square when cross', () => {
     for (let i = 3; i <= 7; i++) {
         initTest(Player.CROSS, Player.CROSS, i);
 
@@ -32,6 +32,20 @@ test('board size 3-7: always start in center square', () => {
 
         const midSquare = GameEngine.getMidSquare(i)
         expect(gameState.board[midSquare].player).toBe(Player.CROSS)
+    }
+})
+
+test('board size 4: always start in center squares when circle and cross in center squares', () => {
+    for (let i = 4; i <= 4; i += 2) {
+        initTest(Player.CIRCLE, Player.CIRCLE, i);
+
+        const midSquare = GameEngine.getMidSquare(i)
+        const midSquareUpperLeft = midSquare - gameState.gridSize - 1
+        gameState.board[midSquareUpperLeft].player = Player.CROSS
+
+        engine.update(gameState)
+
+        expect(gameState.board[midSquare].player).toBe(Player.CIRCLE)
     }
 })
 
