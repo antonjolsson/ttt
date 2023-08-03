@@ -62,8 +62,8 @@ export class GameEngine {
         [3, 6],
         [4, 3],
         [5, 3],
-        [6, 4],
-        [7, 4],
+        [6, 3],
+        [7, 3],
     ])
     static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
 
@@ -76,7 +76,7 @@ export class GameEngine {
         const board = gameState.board
         const gridSize = gameState.gridSize
         const currentPlayer = gameState.currentPlayer
-        const winningLength = gameState.winningRowLength
+        const winningLength = Math.min(gameState.winningRowLength, gridSize)
 
         function getWinSequence(row: ISquare[]): ISquare[] | null {
             for (let i = 0; i <= row.length - winningLength; i++) {

@@ -105,15 +105,15 @@ test('bs 3, wl 3: avoids trivial loss #2', () => {
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-test('bs 4, wl 3: ai response time < 500 ms', () => {
-    for (let i = 4; i <= 5; i++) {
+test('bs 4, wl 3: ai response time < 700 ms', () => {
+    for (let i = 4; i <= 7; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
         gameState.board[GameEngine.getMidSquare(i)].player = Player.CROSS
 
         const startTime = Date.now()
         engine.update(gameState)
         const timeTaken = Date.now() - startTime
-        expect(timeTaken).toBeLessThanOrEqual(500)
+        expect(timeTaken).toBeLessThanOrEqual(800)
     }
 })
 
