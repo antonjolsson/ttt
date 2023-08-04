@@ -88,6 +88,12 @@ function App(): ReactElement {
         }
     }
 
+    function onSelectWinLength(length: number): void {
+        gameState.winningRowLength = length
+        gameEngine.current.checkForEndCondition(gameState)
+        setGameState({...gameState})
+    }
+
     return (
       <GameStateContext.Provider value={{gameState: gameState, setGameState: setGameState}}>
     <div className="app">
@@ -101,7 +107,8 @@ function App(): ReactElement {
                 <MessageArea message={message}/>
                 <RestartButton gameEngine={gameEngine.current}/>
             </section>
-            <SideBar onSelectGridSize={(option: string): void => onSelectGridSize(parseInt(option))}/>
+            <SideBar onSelectGridSize={(option: string): void => onSelectGridSize(parseInt(option))}
+                     onSelectWinLength={(option: string): void => onSelectWinLength(parseInt(option))}/>
         </main>
         <Footer />
 

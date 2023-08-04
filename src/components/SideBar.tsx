@@ -1,11 +1,11 @@
 import React, {ReactElement, useContext} from "react";
 import './Sidebar.css'
 import {RadioButtonControl} from "./RadioButtonControl";
-import {InputControl} from "./InputControl";
 import {GameStateContext} from "../App";
 import {AILevel, GameEngine, Player} from "../GameEngine";
 
-export function SideBar(props: {onSelectGridSize: (option: string) => void}): ReactElement {
+export function SideBar(props: {onSelectGridSize: (option: string) => void,
+    onSelectWinLength: (option: string) => void}): ReactElement {
     const gameCtxt = useContext(GameStateContext)
 
     const aiToOptionString = new Map<Player | undefined, string>([
@@ -33,7 +33,9 @@ export function SideBar(props: {onSelectGridSize: (option: string) => void}): Re
                                 selected={String(gameCtxt.gameState.aiLevel)}/>
             <RadioButtonControl options={GameEngine.ALLOWED_GRID_SIZES.map(n => String(n))} label={'Grid size'}
                                 selected={String(gameCtxt.gameState.gridSize)} onSelect={props.onSelectGridSize}/>
-            <InputControl label={'Grid size'} default={GameEngine.ALLOWED_GRID_SIZES[0]}/>
+            <RadioButtonControl options={GameEngine.ALLOWED_WIN_LENGTHS.map(n => String(n))} label={'Win length'}
+                                selected={String(Math.min(gameCtxt.gameState.winningRowLength, gameCtxt.gameState.gridSize))}
+                                onSelect={props.onSelectWinLength}/>
         </section>
     </div>;
 }

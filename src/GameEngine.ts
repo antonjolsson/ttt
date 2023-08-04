@@ -49,7 +49,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
         currentPlayer: Player.CROSS,
         winningRow: [] as ISquare[],
         gridSize: gridSize,
-        winningRowLength: oldGameState?.winningRowLength ?? 3,
+        winningRowLength: oldGameState?.winningRowLength ?? GameEngine.ALLOWED_WIN_LENGTHS[0],
         board: board,
         ai: oldGameState ? oldGameState.ai : Player.CIRCLE,
         aiLevel: oldGameState?.aiLevel ?? AILevel.HARD,
@@ -66,13 +66,14 @@ export class GameEngine {
         [7, 3],
     ])
     static ALLOWED_GRID_SIZES = [3, 4, 5, 6, 7]
+    static ALLOWED_WIN_LENGTHS = [3, 4]
 
     static getMidSquare(gridSize: number): number {
         const index = Math.floor(gridSize / 2)
         return (gridSize + 1) * index;
     }
 
-    private checkForEndCondition(gameState: IGameState): IGameState {
+    checkForEndCondition(gameState: IGameState): IGameState {
         const board = gameState.board
         const gridSize = gameState.gridSize
         const currentPlayer = gameState.currentPlayer
