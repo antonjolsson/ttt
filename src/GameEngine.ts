@@ -15,7 +15,23 @@ export interface ISquare {
     inWinningRow?: boolean,
 }
 
-export interface ISquareOutcomes {
+enum GameResult {
+    WIN = 'win',
+    DRAW = 'draw',
+    LOSS = 'loss'
+}
+
+interface IGameOutcome {
+    outcome: GameResult,
+    board: ISquare[],
+    depth: number
+}
+
+export interface ISquareEvaluation {
+    outcomes: IGameOutcome[],
+    wins: number,
+    losses: number,
+    draws: number,
     winPoints: number,
     /*semiWinPoints: number,*/
     drawPoints: number,
@@ -24,12 +40,6 @@ export interface ISquareOutcomes {
     imminentWin: boolean,
     imminentLoss: boolean,
     points: number
-}
-
-export enum GameOutcome {
-    WIN = 'win',
-    DRAW = 'draw',
-    LOSS = 'loss'
 }
 
 // TODO: Move inside class
@@ -60,7 +70,7 @@ export function getInitialGameState(oldGameState?: IGameState): IGameState {
 export class GameEngine {
     private gridSizeToRecursionDepth = new Map<number, number>([
         [3, 6],
-        [4, 3],
+        [4, 4],
         [5, 3],
         [6, 3],
         [7, 3],
@@ -179,6 +189,10 @@ export class GameEngine {
                 square: square,
                 index: index,
                 outcomes: {
+                    wins: 0,
+                    draws: 0,
+                    losses: 0,
+                    outcomes: [] as IGameOutcome[],
                     winPoints: 0,
                     drawPoints: 0,
                     lossPoints: 0,
@@ -251,31 +265,37 @@ export class GameEngine {
         return {row: Math.floor(index / gridSize), col: index % gridSize};
     }
 
-    private getSquarePoints(index: number, outcomes: ISquareOutcomes, gameState: IGameState, depth: number): ISquareOutcomes {
+    private getSquarePoints(index: number, evaluation: ISquareEvaluation, gameState: IGameState, depth: number): ISquareEvaluation {
         gameState.board[index].player = gameState.currentPlayer
         gameState = this.checkForEndCondition(gameState)
         if (gameState.winner === gameState.ai) {
-            outcomes.winPoints += this.getBaseOutcomePoints(depth)
+            evaluation.winPoints += this.getBaseOutcomePoints(depth)
+            evaluation.wins++
+            evaluation.outcomes.push({outcome: GameResult.WIN, depth: depth, board: [...gameState.board]})
             if (depth === 1) {
-                outcomes.imminentWin = true
+                evaluation.imminentWin = true
             }
-            this.setSquareOutcomePoints(outcomes)
-            return outcomes
+            this.setSquareOutcomePoints(evaluation)
+            return evaluation
         } else if (gameState.winner) {
-            outcomes.lossPoints += this.getBaseOutcomePoints(depth)
+            evaluation.lossPoints += this.getBaseOutcomePoints(depth)
+            evaluation.losses++
+            evaluation.outcomes.push({outcome: GameResult.LOSS, depth: depth, board: [...gameState.board]})
             if (depth === 2) {
-                outcomes.imminentLoss = true
+                evaluation.imminentLoss = true
             }
-            this.setSquareOutcomePoints(outcomes)
-            return outcomes
+            this.setSquareOutcomePoints(evaluation)
+            return evaluation
         } else if (gameState.draw) {
-            outcomes.drawPoints += this.getBaseOutcomePoints(depth)
-            this.setSquareOutcomePoints(outcomes)
-            return outcomes
+            evaluation.drawPoints += this.getBaseOutcomePoints(depth)
+            evaluation.draws++
+            evaluation.outcomes.push({outcome: GameResult.DRAW, depth: depth, board: [...gameState.board]})
+            this.setSquareOutcomePoints(evaluation)
+            return evaluation
         }
 
         if (depth >= this.gridSizeToRecursionDepth.get(gameState.gridSize)!) {
-            return outcomes
+            return evaluation
         }
 
         // Switch to other player
@@ -286,7 +306,7 @@ export class GameEngine {
         )
             .filter(data => !data.square.player)
         return freeSquares.map(data => {
-            return this.getSquarePoints(data.index, outcomes, JSON.parse(JSON.stringify(gameState)), depth + 1)
+            return this.getSquarePoints(data.index, evaluation, JSON.parse(JSON.stringify(gameState)), depth + 1)
         })
             .sort((a, b) => b.points - a.points)[0]
     }
@@ -295,7 +315,7 @@ export class GameEngine {
         return 1 / (recursionDepth ** 3);
     }
 
-    private setSquareOutcomePoints(outcomes: ISquareOutcomes): void {
+    private setSquareOutcomePoints(outcomes: ISquareEvaluation): void {
         if (outcomes.imminentWin) {
             outcomes.points += 1000
         } else if (outcomes.imminentLoss) {

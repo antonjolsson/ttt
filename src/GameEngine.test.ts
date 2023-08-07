@@ -3,9 +3,10 @@ import {GameEngine, getInitialGameState, Player} from "./GameEngine";
 let gameState = getInitialGameState()
 let engine = new GameEngine()
 
-function initTest(ai: Player, currentPlayer: Player, gridSize = 3): void {
+function initTest(ai: Player, currentPlayer: Player, gridSize = 3, winLength = 3): void {
     gameState.gridSize = gridSize
     gameState.ai = ai
+    gameState.winningRowLength = winLength
     gameState = getInitialGameState(gameState)
 
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
@@ -167,4 +168,16 @@ test('bs 4, wl 3: plays optimally when human does and human starts in corner', (
     engine.update(gameState)
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
+
+/*test('bs 5, wl 4: avoids trivial loss', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE, 5, 4);
+    const midSquare = GameEngine.getMidSquare(5)
+    gameState.board[midSquare].player = Player.CROSS
+    gameState.board[midSquare - gameState.gridSize].player = Player.CIRCLE
+    gameState.board[midSquare - gameState.gridSize +  1].player = Player.CROSS
+
+    engine.update(gameState)
+
+    expect(gameState.board[midSquare + gameState.gridSize - 1].player).toBe(Player.CIRCLE)
+})*/
 
