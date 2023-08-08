@@ -3,23 +3,11 @@ import {Header} from "./components/Header";
 import {Board} from "./components/Board";
 import './App.css'
 import {MessageArea} from "./components/MessageArea";
-import {AILevel, GameEngine, getInitialGameState, ISquare, Player} from "./GameEngine";
+import {GameEngine, getInitialGameState, IGameState, Player} from "./GameEngine";
 import {RestartButton} from "./components/RestartButton";
 import {Footer} from "./components/Footer";
 import {SideBar} from "./components/SideBar";
 import {RestartDialog} from "./components/RestartDialog";
-
-export interface IGameState {
-    currentPlayer: Player,
-    board: ISquare[],
-    winningRow: ISquare[],
-    winningRowLength: number
-    gridSize: number,
-    ai?: Player,
-    winner?: Player,
-    aiLevel: AILevel,
-    draw: boolean
-}
 
 export const GameStateContext = createContext({
     gameState: getInitialGameState(),
@@ -90,8 +78,8 @@ function App(): ReactElement {
 
     function onSelectWinLength(length: number): void {
         gameState.winningRowLength = length
-        gameEngine.current.checkForEndCondition(gameState)
-        setGameState({...gameState})
+        const newState = gameEngine.current.checkForEndCondition(gameState)
+        setGameState({...newState})
     }
 
     return (

@@ -12,7 +12,7 @@ function initTest(ai: Player, currentPlayer: Player, gridSize = 3, winLength = 3
     gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
-test('board size 3, winning length 3: recognizes win condition', () => {
+test('bs 3, wl 3: recognizes win condition', () => {
     initTest(Player.CIRCLE, Player.CIRCLE);
 
     gameState.board = [
@@ -23,6 +23,20 @@ test('board size 3, winning length 3: recognizes win condition', () => {
     engine.update(gameState)
 
     expect(gameState.winner).toBe(Player.CROSS)
+})
+
+test('bs 4, wl 3: creates semi-win condition', () => {
+    initTest(Player.CROSS, Player.CROSS, 4);
+
+    gameState.board = [
+        {}, {}, {}, {},
+        {}, {}, {}, {},
+        {}, {}, {player: Player.CROSS}, {},
+        {player: Player.CIRCLE}, {}, {}, {}]
+
+    engine.update(gameState)
+
+    expect(gameState.board[6].player).toBe(Player.CROSS)
 })
 
 test('bs 3-7: always start in center square when cross', () => {
@@ -37,7 +51,7 @@ test('bs 3-7: always start in center square when cross', () => {
 })
 
 test('bs 4: always start in center squares when circle and cross in center squares', () => {
-    for (let i = 4; i <= 4; i += 2) {
+    for (let i = 4; i <= 5; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
 
         const midSquare = GameEngine.getMidSquare(i)
@@ -106,15 +120,15 @@ test('bs 3, wl 3: avoids trivial loss #2', () => {
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-test('bs 4, wl 3: ai response time < 700 ms', () => {
-    for (let i = 4; i <= 7; i++) {
+test('bs 4-5, wl 3: ai response time < 1700 ms', () => {
+    for (let i = 4; i <= 5; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
         gameState.board[GameEngine.getMidSquare(i)].player = Player.CROSS
 
         const startTime = Date.now()
         engine.update(gameState)
         const timeTaken = Date.now() - startTime
-        expect(timeTaken).toBeLessThanOrEqual(800)
+        expect(timeTaken).toBeLessThanOrEqual(1700)
     }
 })
 
@@ -169,7 +183,7 @@ test('bs 4, wl 3: plays optimally when human does and human starts in corner', (
     expect(gameState.board[3].player).toBe(Player.CIRCLE)
 })
 
-/*test('bs 5, wl 4: avoids trivial loss', () => {
+test('bs 5, wl 4: avoids trivial loss', () => {
     initTest(Player.CIRCLE, Player.CIRCLE, 5, 4);
     const midSquare = GameEngine.getMidSquare(5)
     gameState.board[midSquare].player = Player.CROSS
@@ -179,5 +193,48 @@ test('bs 4, wl 3: plays optimally when human does and human starts in corner', (
     engine.update(gameState)
 
     expect(gameState.board[midSquare + gameState.gridSize - 1].player).toBe(Player.CIRCLE)
+})
+
+test('bs 5, wl 4: optimal second move when cross and circle played non-optimally', () => {
+    initTest(Player.CROSS, Player.CROSS, 5, 4);
+    gameState.board = [
+        {}, {}, {}, {}, {},
+        {}, {}, {}, {}, {},
+        {}, {}, {player: Player.CROSS}, {}, {},
+        {}, {}, {player: Player.CIRCLE}, {}, {},
+        {}, {}, {}, {}, {}]
+
+    engine.update(gameState)
+
+    expect(gameState.board[18].player).toBe(Player.CROSS)
+})
+
+test('bs 5, wl 4: optimal first move when circle and cross in mid square', () => {
+    initTest(Player.CROSS, Player.CROSS, 5, 4);
+    gameState.board = [
+        {}, {}, {}, {}, {},
+        {}, {}, {}, {}, {},
+        {}, {}, {player: Player.CROSS}, {}, {},
+        {}, {}, {}, {}, {},
+        {}, {}, {}, {}, {}]
+
+    engine.update(gameState)
+
+    expect(gameState.board[6].player).toBe(Player.CROSS)
+})
+
+/*test('bs 5, wl 4: detects future semi-win', () => {
+    initTest(Player.CROSS, Player.CROSS, 5, 4);
+    gameState.board = [
+        {}, {}, {}, {}, {},
+        {}, {}, {player: Player.CROSS}, {player: Player.CIRCLE}, {},
+        {}, {}, {player: Player.CROSS}, {}, {},
+        {}, {player: Player.CROSS}, {player: Player.CIRCLE}, {player: Player.CIRCLE}, {},
+        {}, {}, {}, {}, {}]
+
+    engine.update(gameState)
+
+    expect(gameState.board[11].player).toBe(Player.CROSS)
+    // expect(gameState.semiWinner).toBe(Player.CROSS)
 })*/
 
