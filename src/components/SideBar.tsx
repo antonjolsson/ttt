@@ -4,7 +4,7 @@ import {RadioButtonControl} from "./RadioButtonControl";
 import {GameStateContext} from "../App";
 import {AILevel, GameEngine, Player} from "../GameEngine";
 
-export function SideBar(props: {onSelectGridSize: (option: string) => void,
+export function SideBar(props: {engine: GameEngine, onSelectGridSize: (option: string) => void,
     onSelectWinLength: (option: string) => void}): ReactElement {
     const gameCtxt = useContext(GameStateContext)
 
@@ -16,11 +16,12 @@ export function SideBar(props: {onSelectGridSize: (option: string) => void,
 
     function onSelectAIPlayer(option: string): void {
         const player = Array.from(aiToOptionString.entries()).find(e => e[1] === option)![0]
-        gameCtxt.setGameState({...gameCtxt.gameState, ai: player})
+        gameCtxt.setGameState({...gameCtxt.gameState, aiSign: player})
     }
 
     function onSelectAILevel(option: string): void {
         const level = Array.from(Object.entries(AILevel)).find(e => e[1] === option)![1]
+        props.engine.ai = level
         gameCtxt.setGameState({...gameCtxt.gameState, aiLevel: level})
     }
 
@@ -28,7 +29,7 @@ export function SideBar(props: {onSelectGridSize: (option: string) => void,
         <section id={'sidebar'}>
             <h2>Options</h2>
             <RadioButtonControl label={'AI'} options={Array.from(aiToOptionString.values())} onSelect={onSelectAIPlayer}
-                                selected={aiToOptionString.get(gameCtxt.gameState.ai)!}/>
+                                selected={aiToOptionString.get(gameCtxt.gameState.aiSign)!}/>
             <RadioButtonControl label={'Level'} options={Object.values(AILevel)} onSelect={onSelectAILevel}
                                 selected={String(gameCtxt.gameState.aiLevel)}/>
             <RadioButtonControl options={GameEngine.ALLOWED_GRID_SIZES.map(n => String(n))} label={'Grid size'}

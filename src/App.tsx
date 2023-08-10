@@ -17,7 +17,7 @@ export const GameStateContext = createContext({
 function App(): ReactElement {
     const [gameState, setGameState] = useState(getInitialGameState())
     const [message, setMessage] = useState(getCurrentMessage(gameState.currentPlayer, false, gameState.winner))
-    const gameEngine = useRef(new GameEngine())
+    const gameEngine = useRef(new GameEngine(gameState.aiLevel))
     const [gameRunning, setGameRunning] = useState(gameState.board.some(s => s.player))
     const [pendingGridSize, setPendingGridSize] = useState(-1)
 
@@ -42,12 +42,12 @@ function App(): ReactElement {
 
     // New turn
     useEffect(() => {
-        if (gameState.ai === gameState.currentPlayer) {
-            gameState.currentPlayer = gameEngine.current.getNextPlayer(gameState.currentPlayer)
+        if (gameState.aiSign === gameState.currentPlayer) {
+            gameState.currentPlayer = GameEngine.getNextPlayer(gameState.currentPlayer)
             gameEngine.current.update(gameState)
             setGameState({...gameState, board: [...gameState.board]})
         }
-    }, [gameState.ai, gameState.board, gameState.currentPlayer])
+    }, [gameState.aiSign, gameState.board, gameState.currentPlayer])
 
     useEffect(() => {
         if (!gameRunning && pendingGridSize > -1 && pendingGridSize !== gameState.gridSize) {
@@ -95,7 +95,7 @@ function App(): ReactElement {
                 <MessageArea message={message}/>
                 <RestartButton gameEngine={gameEngine.current}/>
             </section>
-            <SideBar onSelectGridSize={(option: string): void => onSelectGridSize(parseInt(option))}
+            <SideBar engine={gameEngine.current} onSelectGridSize={(option: string): void => onSelectGridSize(parseInt(option))}
                      onSelectWinLength={(option: string): void => onSelectWinLength(parseInt(option))}/>
         </main>
         <Footer />

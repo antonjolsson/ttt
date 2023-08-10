@@ -1,15 +1,15 @@
 import {GameEngine, getInitialGameState, Player} from "./GameEngine";
 
 let gameState = getInitialGameState()
-let engine = new GameEngine()
+let engine = new GameEngine(gameState.aiLevel)
 
 function initTest(ai: Player, currentPlayer: Player, gridSize = 3, winLength = 3): void {
     gameState.gridSize = gridSize
-    gameState.ai = ai
+    gameState.aiSign = ai
     gameState.winningRowLength = winLength
     gameState = getInitialGameState(gameState)
 
-    gameState.currentPlayer = engine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
+    gameState.currentPlayer = GameEngine.getNextPlayer(currentPlayer) // Will change to next player's turn when calling update
 }
 
 test('bs 3, wl 3: recognizes win condition', () => {
