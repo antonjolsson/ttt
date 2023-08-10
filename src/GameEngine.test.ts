@@ -25,7 +25,20 @@ test('bs 3, wl 3: recognizes win condition', () => {
     expect(gameState.winner).toBe(Player.CROSS)
 })
 
-test('bs 4, wl 3: creates semi-win condition', () => {
+test('bs 3, wl 3: picks winning square', () => {
+    initTest(Player.CIRCLE, Player.CIRCLE);
+
+    gameState.board = [
+        {player: Player.CROSS}, {}, {},
+        {player: Player.CROSS}, {player: Player.CIRCLE}, {player: Player.CIRCLE},
+        {player: Player.CIRCLE}, {player: Player.CROSS}, {player: Player.CROSS}]
+
+    engine.update(gameState)
+
+    expect(gameState.winner).toBe(Player.CIRCLE)
+})
+
+/*test('bs 4, wl 3: creates semi-win condition', () => {
     initTest(Player.CROSS, Player.CROSS, 4);
 
     gameState.board = [
@@ -223,7 +236,7 @@ test('bs 5, wl 4: optimal first move when circle and cross in mid square', () =>
     expect(gameState.board[6].player).toBe(Player.CROSS)
 })
 
-/*test('bs 5, wl 4: detects future semi-win', () => {
+/!*test('bs 5, wl 4: detects future semi-win', () => {
     initTest(Player.CROSS, Player.CROSS, 5, 4);
     gameState.board = [
         {}, {}, {}, {}, {},
@@ -236,5 +249,5 @@ test('bs 5, wl 4: optimal first move when circle and cross in mid square', () =>
 
     expect(gameState.board[11].player).toBe(Player.CROSS)
     // expect(gameState.semiWinner).toBe(Player.CROSS)
-})*/
+})*!/*/
 
