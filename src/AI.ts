@@ -1,8 +1,12 @@
-import {GameEngine, IGameState, Player} from "./GameEngine";
-import assert from "assert";
+import {GameEngine, IGameState, ISquare, Player} from "./GameEngine";
 
 enum AIStrategy {
     MAXIMIZING = 'maximizing', MINIMIZING = 'minimizing'
+}
+
+interface ISquareData {
+    square: ISquare,
+    index: number
 }
 
 export interface IAI {
@@ -29,15 +33,46 @@ function boardAsString(gameState: IGameState): string {
 export class HardAI implements IAI {
     private static WIN_POINTS = 20
     private static DEPTH_POINTS = 1
+    private gridSizeToRecursionDepth = new Map<number, number>([
+        [3, 9],
+        [4, 5],
+        [5, 5],
+        [6, 3],
+        [7, 3],
+    ])
 
     constructor(private checkForEndCondition: (gameState: IGameState) => IGameState) {}
 
     move(gameState: IGameState): void {
+        const gridSize = gameState.gridSize
+        const midSquare = GameEngine.getMidSquare(gridSize)
+
         // If empty board, hard-code AI to choose center square
         if (gameState.board.every(sq => !sq.player)) {
-            const midSquare = GameEngine.getMidSquare(gameState.gridSize)
             gameState.board[midSquare].player = gameState.aiPlayer
             return
+        }
+
+        // If gridSize > 4 && first move was midSquare, pick diagonal adjacent square
+        if (gridSize >= 4 && gameState.board.filter(sq => sq.player).length === 1) {
+            if (gameState.board[midSquare].player) {
+                gameState.board[midSquare - gridSize - 1].player = gameState.aiPlayer
+                return
+            } else if (gridSize % 2 === 0 && gameState.board[midSquare - 1].player) {
+                gameState.board[midSquare - gridSize].player = gameState.aiPlayer
+                return
+            } else if (gridSize % 2 === 0 && gameState.board[midSquare - gridSize].player) {
+                gameState.board[midSquare - 1].player = gameState.aiPlayer
+                return
+            } else if (gridSize % 2 === 0 && gameState.board[midSquare - gridSize - 1].player) {
+                gameState.board[midSquare].player = gameState.aiPlayer
+                return
+            }
+        }
+
+        let squaresData = this.getFreeSquaresData(gameState)
+        if (gridSize > 3) {
+            squaresData = this.getAdjacentSquaresData(squaresData, gameState);
         }
 
         const strategy = gameState.aiPlayer === Player.CROSS ? AIStrategy.MAXIMIZING : AIStrategy.MINIMIZING
@@ -45,14 +80,11 @@ export class HardAI implements IAI {
         let bestSquare = -1
         let bestSquarePoints = strategy === AIStrategy.MAXIMIZING ? -Infinity : Infinity
 
-        gameState.board.forEach((sq, i) => {
-            if (sq.player) {
-                return
-            }
+        squaresData.map(data => data.index).forEach(i => {
             const newState = JSON.parse(JSON.stringify(gameState))
             newState.board[i].player = gameState.aiPlayer
             const opponentStrategy = strategy === AIStrategy.MAXIMIZING ? AIStrategy.MINIMIZING : AIStrategy.MAXIMIZING
-            const points = this.miniMax(newState, 0, opponentStrategy)
+            const points = this.miniMax(newState, 0, opponentStrategy, -Infinity, Infinity)
             if ((strategy === AIStrategy.MAXIMIZING && points > bestSquarePoints)
                 || (strategy === AIStrategy.MINIMIZING && points < bestSquarePoints)) {
                 bestSquarePoints = points
@@ -63,9 +95,38 @@ export class HardAI implements IAI {
         gameState.board[bestSquare].player = gameState.aiPlayer
     }
 
-    miniMax(gameState: IGameState, depth: number, strategy: AIStrategy): number {
+    private getFreeSquaresData(gameState: IGameState): ISquareData[] {
+        return gameState.board
+            .map((sq, i) => {
+                return {square: sq, index: i}
+            })
+            .filter(data => !data.square.player)
+
+    }
+
+    private getAdjacentSquaresData(freeSquaresData: ISquareData[], gameState: IGameState): ISquareData[] {
+        const occupiedSquaresData = gameState.board.map((sq, i) => {
+                return {square: sq, index: i}
+            })
+            .filter(data => data.square.player)
+        return freeSquaresData.filter(data => {
+            const iF = data.index
+            const {row: fRow, col: fCol} = this.getRowAndColumnFromIndex(iF, gameState.gridSize);
+
+            // Check if this free square is adjacent to some occupied square
+            return occupiedSquaresData.some(oData => {
+                const iO = oData.index
+                const {row: oRow, col: oCol} = this.getRowAndColumnFromIndex(iO, gameState.gridSize);
+
+                return (Math.abs(oRow - fRow) <= 1
+                    && Math.abs(oCol - fCol) <= 1)
+            })
+        })
+    }
+
+    miniMax(gameState: IGameState, depth: number, strategy: AIStrategy, alpha: number, beta: number): number {
         gameState = this.checkForEndCondition(gameState)
-        if (gameState.draw) {
+        if (depth === this.gridSizeToRecursionDepth.get(gameState.gridSize) || gameState.draw) {
             return 0
         }
         if (gameState.winner === Player.CROSS) {
@@ -75,67 +136,42 @@ export class HardAI implements IAI {
             return -HardAI.WIN_POINTS + depth * HardAI.DEPTH_POINTS
         }
 
+        let squaresData = this.getFreeSquaresData(gameState)
+        if (gameState.gridSize > 3) {
+            squaresData = this.getAdjacentSquaresData(squaresData, gameState)
+        }
+
         if (strategy === AIStrategy.MAXIMIZING) {
             let bestVal = -Infinity
-            gameState.board.forEach((sq, i) => {
-                if (sq.player) {
-                    return
-                }
+            for (const data of squaresData) {
                 const newState = JSON.parse(JSON.stringify(gameState)) as IGameState
-                newState.board[i].player = Player.CROSS
+                newState.board[data.index].player = Player.CROSS
                 newState.currentPlayer = Player.CROSS
-                const value = this.miniMax(newState, depth + 1, AIStrategy.MINIMIZING)
+                const value = this.miniMax(newState, depth + 1, AIStrategy.MINIMIZING, alpha, beta)
                 bestVal = Math.max(bestVal, value)
-            })
+                alpha = Math.max(alpha, bestVal)
+                if (beta <= alpha) {
+                    break
+                }
+            }
             return bestVal
         }
 
         // strategy = AIStrategy.MINIMIZING
         let bestVal = Infinity
-        gameState.board.forEach((sq, i) => {
-            if (sq.player) {
-                return
-            }
+        for (const data of squaresData) {
             const newState = JSON.parse(JSON.stringify(gameState)) as IGameState
-            newState.board[i].player = Player.CIRCLE
+            newState.board[data.index].player = Player.CIRCLE
             newState.currentPlayer = Player.CIRCLE
-            const value = this.miniMax(newState, depth + 1, AIStrategy.MAXIMIZING)
+            const value = this.miniMax(newState, depth + 1, AIStrategy.MAXIMIZING, alpha, beta)
             bestVal = Math.min(bestVal, value)
-        })
+            beta = Math.min(beta, bestVal)
+            if (beta <= alpha) {
+                break
+            }
+        }
         return bestVal
     }
-
-    /*private gridSizeToRecursionDepth = new Map<number, number>([
-        [3, 6],
-        [4, 4],
-        [5, 3],
-        [6, 3],
-        [7, 3],
-    ])*/
-
-    /*move(gameState: IGameState): void {
-        // If gridSize > 3, only use squares adjacent to occupied ones as candidates
-        if (gridSize > 3) {
-            const occupiedSquaresData = allSquaresData.filter(data => data.square.player)
-            const adjacentSquaresData = squaresData.filter(freeSquareData => {
-                const iF = freeSquareData.index
-                const {row: fRow, col: fCol} = this.getRowAndColumnFromIndex(iF, gridSize);
-
-                // Check if this free square is adjacent to some occupied square
-                return occupiedSquaresData.some(data => {
-                    const iO = data.index
-                    const {row: oRow, col: oCol} = this.getRowAndColumnFromIndex(iO, gridSize);
-
-                    return (Math.abs(oRow - fRow) <= 1
-                        && Math.abs(oCol - fCol) <= 1)
-                })
-            })
-            squaresData = adjacentSquaresData.map(data => {
-                data.hasAdjacentSymbol = true
-                return data
-            })
-        }
-    }*/
 
     private getRowAndColumnFromIndex(index: number, gridSize: number): { row: number, col: number } {
         return {row: Math.floor(index / gridSize), col: index % gridSize};

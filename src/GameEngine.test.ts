@@ -77,7 +77,7 @@ test('bs 3, wl 3: avoids loss II', () => {
     expect(gameState.board[6].player).toBe(Player.CROSS)
 })
 
-/*test('bs 4, wl 3: creates semi-win condition', () => {
+test('bs 4, wl 3: creates semi-win condition', () => {
     initTest(Player.CROSS, Player.CROSS, 4);
 
     gameState.board = [
@@ -88,11 +88,11 @@ test('bs 3, wl 3: avoids loss II', () => {
 
     engine.update(gameState)
 
-    expect(gameState.board[6].player).toBe(Player.CROSS)
-})*/
+    expect(gameState.board[5].player).toBe(Player.CROSS)
+})
 
-test('bs 3-7: always start in center square when cross', () => {
-    for (let i = 3; i <= 3; i++) {
+test('bs 3-4: always start in center square when cross', () => {
+    for (let i = 3; i <= 4; i++) {
         initTest(Player.CROSS, Player.CROSS, i);
 
         engine.update(gameState)

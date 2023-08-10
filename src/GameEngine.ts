@@ -40,7 +40,7 @@ export function initBoard(gridSize: number): ISquare[] {
 }
 
 export function getInitialGameState(oldGameState?: IGameState): IGameState {
-    const gridSize = oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[0]
+    const gridSize = oldGameState ? oldGameState.gridSize : GameEngine.ALLOWED_GRID_SIZES[2]
     const board = initBoard(gridSize)
     return {
         currentPlayer: Player.CROSS,
