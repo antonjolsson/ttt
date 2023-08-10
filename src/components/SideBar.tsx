@@ -16,7 +16,7 @@ export function SideBar(props: {engine: GameEngine, onSelectGridSize: (option: s
 
     function onSelectAIPlayer(option: string): void {
         const player = Array.from(aiToOptionString.entries()).find(e => e[1] === option)![0]
-        gameCtxt.setGameState({...gameCtxt.gameState, aiSign: player})
+        gameCtxt.setGameState({...gameCtxt.gameState, aiPlayer: player})
     }
 
     function onSelectAILevel(option: string): void {
@@ -29,7 +29,7 @@ export function SideBar(props: {engine: GameEngine, onSelectGridSize: (option: s
         <section id={'sidebar'}>
             <h2>Options</h2>
             <RadioButtonControl label={'AI'} options={Array.from(aiToOptionString.values())} onSelect={onSelectAIPlayer}
-                                selected={aiToOptionString.get(gameCtxt.gameState.aiSign)!}/>
+                                selected={aiToOptionString.get(gameCtxt.gameState.aiPlayer)!}/>
             <RadioButtonControl label={'Level'} options={Object.values(AILevel)} onSelect={onSelectAILevel}
                                 selected={String(gameCtxt.gameState.aiLevel)}/>
             <RadioButtonControl options={GameEngine.ALLOWED_GRID_SIZES.map(n => String(n))} label={'Grid size'}

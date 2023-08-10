@@ -1,4 +1,9 @@
-import {GameEngine, GameResult, IGameOutcome, IGameState, ISquareEvaluation} from "./GameEngine";
+import {GameEngine, IGameState, Player} from "./GameEngine";
+import assert from "assert";
+
+enum AIStrategy {
+    MAXIMIZING = 'maximizing', MINIMIZING = 'minimizing'
+}
 
 export interface IAI {
     move: (gameState: IGameState) => void
@@ -12,79 +17,103 @@ export class EasyAI implements IAI {
     }
 }
 
-export class HardAI implements IAI {
-    constructor(private checkForEndCondition: (gameState: IGameState, checkSemiWins?: boolean) => IGameState) {}
+function boardAsString(gameState: IGameState): string {
+    let str = '\n'
+    for (let i = 0; i < gameState.gridSize; i++) {
+        str += gameState.board.slice(i * gameState.gridSize, (i + 1) * gameState.gridSize)
+            .map(sq => sq.player ?? '.').join(' ') + '\n'
+    }
+    return str
+}
 
-    private static SEMI_WIN_POINTS = 0.5
-    private static IMMINENT_WIN_POINTS = 1000
-    private gridSizeToRecursionDepth = new Map<number, number>([
+export class HardAI implements IAI {
+    private static WIN_POINTS = 20
+    private static DEPTH_POINTS = 1
+
+    constructor(private checkForEndCondition: (gameState: IGameState) => IGameState) {}
+
+    move(gameState: IGameState): void {
+        // If empty board, hard-code AI to choose center square
+        if (gameState.board.every(sq => !sq.player)) {
+            const midSquare = GameEngine.getMidSquare(gameState.gridSize)
+            gameState.board[midSquare].player = gameState.aiPlayer
+            return
+        }
+
+        const strategy = gameState.aiPlayer === Player.CROSS ? AIStrategy.MAXIMIZING : AIStrategy.MINIMIZING
+
+        let bestSquare = -1
+        let bestSquarePoints = strategy === AIStrategy.MAXIMIZING ? -Infinity : Infinity
+
+        gameState.board.forEach((sq, i) => {
+            if (sq.player) {
+                return
+            }
+            const newState = JSON.parse(JSON.stringify(gameState))
+            newState.board[i].player = gameState.aiPlayer
+            const opponentStrategy = strategy === AIStrategy.MAXIMIZING ? AIStrategy.MINIMIZING : AIStrategy.MAXIMIZING
+            const points = this.miniMax(newState, 0, opponentStrategy)
+            if ((strategy === AIStrategy.MAXIMIZING && points > bestSquarePoints)
+                || (strategy === AIStrategy.MINIMIZING && points < bestSquarePoints)) {
+                bestSquarePoints = points
+                bestSquare = i
+            }
+        })
+
+        gameState.board[bestSquare].player = gameState.aiPlayer
+    }
+
+    miniMax(gameState: IGameState, depth: number, strategy: AIStrategy): number {
+        gameState = this.checkForEndCondition(gameState)
+        if (gameState.draw) {
+            return 0
+        }
+        if (gameState.winner === Player.CROSS) {
+            return HardAI.WIN_POINTS - depth * HardAI.DEPTH_POINTS
+        }
+        if (gameState.winner === Player.CIRCLE) {
+            return -HardAI.WIN_POINTS + depth * HardAI.DEPTH_POINTS
+        }
+
+        if (strategy === AIStrategy.MAXIMIZING) {
+            let bestVal = -Infinity
+            gameState.board.forEach((sq, i) => {
+                if (sq.player) {
+                    return
+                }
+                const newState = JSON.parse(JSON.stringify(gameState)) as IGameState
+                newState.board[i].player = Player.CROSS
+                newState.currentPlayer = Player.CROSS
+                const value = this.miniMax(newState, depth + 1, AIStrategy.MINIMIZING)
+                bestVal = Math.max(bestVal, value)
+            })
+            return bestVal
+        }
+
+        // strategy = AIStrategy.MINIMIZING
+        let bestVal = Infinity
+        gameState.board.forEach((sq, i) => {
+            if (sq.player) {
+                return
+            }
+            const newState = JSON.parse(JSON.stringify(gameState)) as IGameState
+            newState.board[i].player = Player.CIRCLE
+            newState.currentPlayer = Player.CIRCLE
+            const value = this.miniMax(newState, depth + 1, AIStrategy.MAXIMIZING)
+            bestVal = Math.min(bestVal, value)
+        })
+        return bestVal
+    }
+
+    /*private gridSizeToRecursionDepth = new Map<number, number>([
         [3, 6],
         [4, 4],
         [5, 3],
         [6, 3],
         [7, 3],
-    ])
+    ])*/
 
-    move(gameState: IGameState): void {
-        const board = gameState.board
-        const gridSize = gameState.gridSize
-
-        let allSquaresData = board.map((square, index) => {
-            return {
-                square: square,
-                index: index,
-                outcomes: {
-                    wins: 0,
-                    draws: 0,
-                    losses: 0,
-                    semiWins: 0,
-                    semiLosses: 0,
-                    outcomes: [] as IGameOutcome[],
-                    winPoints: 0,
-                    drawPoints: 0,
-                    lossPoints: 0,
-                    points: 0,
-                    imminentWin: false,
-                    imminentLoss: false
-                },
-                hasAdjacentSymbol: false
-            }
-        })
-        let squaresData = allSquaresData.filter(data => !data.square.player)
-
-        // If empty board, always go with center square
-        if (squaresData.length === board.length) {
-            const midSquare = GameEngine.getMidSquare(gridSize);
-            board[midSquare].player = gameState.currentPlayer
-            return
-        }
-
-        // If first move and circle, always go with center square if free, else square to its upper left
-        if (gridSize > 4 && squaresData.length === board.length - 1) {
-            const midSquare = GameEngine.getMidSquare(gridSize);
-            if (board[midSquare].player) {
-                board[midSquare - gridSize - 1].player = gameState.currentPlayer
-            } else {
-                board[midSquare].player = gameState.currentPlayer
-            }
-            return
-        }
-
-        // If second move, cross and circle picked square straight up, left, right or down from center,
-        // pick square that's adjacent to both
-        if (gridSize > 4 && squaresData.length === board.length - 2) {
-            const midSquare = GameEngine.getMidSquare(gridSize);
-            if (board[midSquare - gridSize].player === GameEngine.getNextPlayer(gameState.currentPlayer)
-                || board[midSquare - 1].player === GameEngine.getNextPlayer(gameState.currentPlayer)) {
-                board[midSquare - gridSize - 1].player = gameState.currentPlayer
-                return
-            } else if (board[midSquare + 1].player === GameEngine.getNextPlayer(gameState.currentPlayer)
-                || board[midSquare + gridSize].player === GameEngine.getNextPlayer(gameState.currentPlayer)) {
-                board[midSquare + gridSize + 1].player = gameState.currentPlayer
-                return
-            }
-        }
-
+    /*move(gameState: IGameState): void {
         // If gridSize > 3, only use squares adjacent to occupied ones as candidates
         if (gridSize > 3) {
             const occupiedSquaresData = allSquaresData.filter(data => data.square.player)
@@ -106,109 +135,9 @@ export class HardAI implements IAI {
                 return data
             })
         }
-
-        for (let i = 0; i < squaresData.length; i++) {
-            const square = squaresData[i];
-            square.outcomes = this.getSquarePoints(square.index, square.outcomes,
-                JSON.parse(JSON.stringify(gameState)), 1)
-            if (square.outcomes.imminentWin) {
-                break
-            }
-        }
-
-        squaresData.sort((a, b) => {
-            let sorting = b.outcomes.points - a.outcomes.points
-            // Possibly break sorting tie by determining square closest to centre
-            if (sorting === 0) {
-                const midSquare = GameEngine.getMidSquare(gridSize);
-                const {row: midSquareRow, col: midSquareCol} = this.getRowAndColumnFromIndex(midSquare, gridSize)
-                const {row: aRow, col: aCol} = this.getRowAndColumnFromIndex(a.index, gridSize)
-                const {row: bRow, col: bCol} = this.getRowAndColumnFromIndex(b.index, gridSize)
-                const aDist = Math.abs(aRow - midSquareRow) + Math.abs(aCol - midSquareCol)
-                const bDist = Math.abs(bRow - midSquareRow) + Math.abs(bCol - midSquareCol)
-                sorting = aDist - bDist
-            }
-            return sorting
-        })
-        console.log(squaresData)
-        board[squaresData[0].index].player = gameState.currentPlayer
-    }
-
-    private getSquarePoints(index: number, evaluation: ISquareEvaluation, gameState: IGameState, depth: number): ISquareEvaluation {
-        gameState.board[index].player = gameState.currentPlayer
-        gameState = this.checkForEndCondition(gameState, true)
-        if (gameState.winner === gameState.aiSign) {
-            evaluation.winPoints += this.getBaseOutcomePoints(depth)
-            evaluation.wins++
-            evaluation.outcomes.push({outcome: GameResult.WIN, depth: depth, board: [...gameState.board]})
-            if (depth === 1) {
-                evaluation.imminentWin = true
-            }
-            this.setSquareOutcomePoints(evaluation)
-            return evaluation
-        }
-        if (gameState.winner) {
-            evaluation.lossPoints += this.getBaseOutcomePoints(depth)
-            evaluation.losses++
-            evaluation.outcomes.push({outcome: GameResult.LOSS, depth: depth, board: [...gameState.board]})
-            if (depth === 2) {
-                evaluation.imminentLoss = true
-            }
-            this.setSquareOutcomePoints(evaluation)
-            return evaluation
-        }
-        if (gameState.draw) {
-            evaluation.drawPoints += this.getBaseOutcomePoints(depth)
-            evaluation.draws++
-            evaluation.outcomes.push({outcome: GameResult.DRAW, depth: depth, board: [...gameState.board]})
-            this.setSquareOutcomePoints(evaluation)
-            return evaluation
-        }
-        if (gameState.semiWinner === gameState.aiSign) {
-            evaluation.winPoints += this.getBaseOutcomePoints(depth) * HardAI.SEMI_WIN_POINTS
-            evaluation.semiWins++
-            evaluation.outcomes.push({outcome: GameResult.SEMI_WIN, depth: depth, board: [...gameState.board]})
-            this.setSquareOutcomePoints(evaluation)
-        } else if (gameState.semiWinner) {
-            evaluation.lossPoints += this.getBaseOutcomePoints(depth) * HardAI.SEMI_WIN_POINTS
-            evaluation.semiLosses++
-            evaluation.outcomes.push({outcome: GameResult.SEMI_LOSS, depth: depth, board: [...gameState.board]})
-            this.setSquareOutcomePoints(evaluation)
-        }
-
-        if (depth >= this.gridSizeToRecursionDepth.get(gameState.gridSize)!) {
-            return evaluation
-        }
-
-        // Switch to other player
-        gameState.currentPlayer = GameEngine.getNextPlayer(gameState.currentPlayer)
-        const freeSquares = gameState.board.map((sq, i) => {
-                return {square: sq, index: i}
-            }
-        )
-            .filter(data => !data.square.player)
-        return freeSquares.map(data => {
-            return this.getSquarePoints(data.index, evaluation, JSON.parse(JSON.stringify(gameState)), depth + 1)
-        })
-            .sort((a, b) => b.points - a.points)[0]
-    }
+    }*/
 
     private getRowAndColumnFromIndex(index: number, gridSize: number): { row: number, col: number } {
         return {row: Math.floor(index / gridSize), col: index % gridSize};
-    }
-
-    private getBaseOutcomePoints(recursionDepth: number): number {
-        return 1 / (recursionDepth ** 2);
-    }
-
-    private setSquareOutcomePoints(evaluation: ISquareEvaluation): void {
-        if (evaluation.imminentWin) {
-            evaluation.points += HardAI.IMMINENT_WIN_POINTS
-        } else if (evaluation.imminentLoss) {
-            evaluation.points -= HardAI.IMMINENT_WIN_POINTS
-        } else {
-            const totalOutcomes = evaluation.winPoints + evaluation.drawPoints + evaluation.lossPoints
-            evaluation.points = (evaluation.winPoints - evaluation.lossPoints) / totalOutcomes
-        }
     }
 }

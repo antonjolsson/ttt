@@ -42,12 +42,12 @@ function App(): ReactElement {
 
     // New turn
     useEffect(() => {
-        if (gameState.aiSign === gameState.currentPlayer) {
+        if (gameState.aiPlayer === gameState.currentPlayer) {
             gameState.currentPlayer = GameEngine.getNextPlayer(gameState.currentPlayer)
             gameEngine.current.update(gameState)
             setGameState({...gameState, board: [...gameState.board]})
         }
-    }, [gameState.aiSign, gameState.board, gameState.currentPlayer])
+    }, [gameState.aiPlayer, gameState.board, gameState.currentPlayer])
 
     useEffect(() => {
         if (!gameRunning && pendingGridSize > -1 && pendingGridSize !== gameState.gridSize) {
