@@ -102,8 +102,8 @@ test('bs 3-4: always start in center square when cross', () => {
     }
 })
 
-/*test('bs 4: always start in center squares when circle and cross in center squares', () => {
-    for (let i = 4; i <= 5; i++) {
+test('bs 4: always start in center squares when circle and cross in center squares', () => {
+    for (let i = 4; i <= 7; i++) {
         initTest(Player.CIRCLE, Player.CIRCLE, i);
 
         const midSquare = GameEngine.getMidSquare(i)
@@ -114,7 +114,7 @@ test('bs 3-4: always start in center square when cross', () => {
 
         expect(gameState.board[midSquare].player).toBe(Player.CIRCLE)
     }
-})*/
+})
 
 /*test('bs 3: weighs outcomes by recursion depth', () => {
     initTest(Player.CIRCLE, Player.CIRCLE);

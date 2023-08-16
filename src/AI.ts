@@ -35,8 +35,8 @@ export class HardAI implements IAI {
     private static DEPTH_POINTS = 1
     private gridSizeToRecursionDepth = new Map<number, number>([
         [3, 9],
-        [4, 5],
-        [5, 5],
+        [4, 7],
+        [5, 6],
         [6, 3],
         [7, 3],
     ])
@@ -67,6 +67,14 @@ export class HardAI implements IAI {
             } else if (gridSize % 2 === 0 && gameState.board[midSquare - gridSize - 1].player) {
                 gameState.board[midSquare].player = gameState.aiPlayer
                 return
+                // If gridSize = 5 or 7 && first move was adjacent to midSquare, pick adjacent square
+            } else if (gridSize % 2 === 1) {
+                const occupiedSquareIndex = gameState.board.findIndex(sq => sq.player)
+                const dist = Math.abs(midSquare - occupiedSquareIndex)
+                if (dist === 1 || dist === gridSize || dist === gridSize + 1 || dist === gridSize - 1) {
+                    gameState.board[midSquare].player = gameState.aiPlayer
+                    return
+                }
             }
         }
 
@@ -90,8 +98,10 @@ export class HardAI implements IAI {
                 bestSquarePoints = points
                 bestSquare = i
             }
+            // console.log(`Index: ${i}, points: ${points}`)
         })
 
+        // console.log(`Best square: ${bestSquare}`)
         gameState.board[bestSquare].player = gameState.aiPlayer
     }
 

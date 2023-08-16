@@ -69,7 +69,6 @@ function App(): ReactElement {
 
     function onRestartDialogAction(restart: boolean): void {
         if (restart) {
-            console.log('restart!')
             setGameRunning(false)
         } else {
             setPendingGridSize(gameState.gridSize)
